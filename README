@@ -1,4 +1,21 @@
-libNGFpp
-========
+Ngf::Client
+===========
 
+Source: https://github.com/nemomobile/libngf-qt
+
+Qt-based client for NGF daemon (Non-Graphic Feedback).
+
+See src/include/ngfclient.h for API documentation.
+
+Building
+--------
+
+Prerequisities; Qt development environment (QtCore and QtDBus) and doxygen for man page generation.
+
+qmake PREFIX=/usr   # Default prefix is /usr/local
+make
+make doc
+make install
+
+pkg-config -file (ngf-qt.pc) is generated during build as well.
 
