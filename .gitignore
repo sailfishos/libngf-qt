@@ -1,0 +1,5 @@
+*.o
+moc_*
+Makefile
+*.so*
+ngf-qt-client
