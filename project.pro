@@ -3,7 +3,7 @@ isEmpty(PREFIX) {
     PREFIX = /usr/local
 }
 TEMPLATE = subdirs
-SUBDIRS += src
+SUBDIRS += src declarative
 
 # No need to build this, but if you want then 'qmake EXAMPLE=1 && make'
 count(EXAMPLE, 1) {
