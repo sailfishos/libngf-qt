@@ -1,0 +1,6 @@
+* Thu Jan 24 2013 John Brooks <john.brooks@jollamobile.com> - 0.2
+- Add declarative NGF client plugin
+
+* Mon Dec 17 2012 Juho Hamalainen <juho.hamalainen@tieto.com> - 0.1
+- First version of Qt-based client library for NGF daemon.
+

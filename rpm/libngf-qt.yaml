@@ -1,0 +1,33 @@
+Name: libngf-qt
+Summary: Qt-based client library for Non-Graphic Feedback daemon
+Version: 0.2
+Release: 1
+Group: System/Libraries
+License: LGPLv2.1
+URL: https://github.com/nemomobile/libngf-qt
+Sources:
+    - "%{name}-%{version}.tar.bz2"
+Description: |
+    This package contains the Qt-based client library for accessing
+    Non-graphic feedback services.
+
+Requires:
+    - ngfd
+PkgBR:
+    - doxygen
+PkgConfigBR:
+    - QtCore
+    - QtDBus
+    - QtDeclarative
+Configure: none
+Builder: make
+SubPackages:
+    - Name: devel
+      Summary: Development package for Qt-based client library for NGF daemon
+      Group: Development/Libraries
+      Description: "%{summary}."
+
+    - Name: declarative
+      Summary: Declarative plugin for NGF clients
+      Group: Development/Libraries
+      Description: "%{summary}."
