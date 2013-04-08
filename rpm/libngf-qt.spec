@@ -54,9 +54,9 @@ Requires:   %{name} = %{version}-%{release}
 
 %build
 # >> build pre
-%qmake
 # << build pre
 
+%qmake 
 
 make %{?jobs:-j%jobs}
 
@@ -68,7 +68,7 @@ make doc
 rm -rf %{buildroot}
 # >> install pre
 # << install pre
-%make_install
+%qmake_install
 
 # >> install post
 # << install post
@@ -80,24 +80,21 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
-# >> files
-%doc COPYING
 %{_libdir}/libngf-qt.so.*
+# >> files
 # << files
 
 %files devel
 %defattr(-,root,root,-)
-# >> files devel
-%doc COPYING
 %{_libdir}/libngf-qt.so
 %{_includedir}/ngf-qt/*.h
 %{_includedir}/ngf-qt/NgfClient
 %{_libdir}/pkgconfig/ngf-qt.pc
-%{_mandir}/man3/Ngf_Client.3.gz
+# >> files devel
 # << files devel
 
 %files declarative
 %defattr(-,root,root,-)
-# >> files declarative
 %{_libdir}/qt4/imports/org/nemomobile/ngf/*
+# >> files declarative
 # << files declarative
