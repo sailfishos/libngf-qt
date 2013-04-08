@@ -21,13 +21,24 @@ PkgConfigBR:
     - QtDeclarative
 Configure: none
 Builder: qmake
+Files:
+    - "%{_libdir}/libngf-qt.so.*"
 SubPackages:
     - Name: devel
       Summary: Development package for Qt-based client library for NGF daemon
       Group: Development/Libraries
       Description: "%{summary}."
+      Files:
+          - "%{_libdir}/libngf-qt.so"
+          - "%{_includedir}/ngf-qt/*.h"
+          - "%{_includedir}/ngf-qt/NgfClient"
+          - "%{_libdir}/pkgconfig/ngf-qt.pc"
+          - "%{_mandir}/man3/Ngf_Client.3.gz"
 
     - Name: declarative
       Summary: Declarative plugin for NGF clients
       Group: Development/Libraries
       Description: "%{summary}."
+      Files:
+          - "%{_libdir}/qt4/imports/org/nemomobile/ngf/*"
+

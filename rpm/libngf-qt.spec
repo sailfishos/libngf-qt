@@ -80,24 +80,24 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
+%{_libdir}/libngf-qt.so.*
 # >> files
 %doc COPYING
-%{_libdir}/libngf-qt.so.*
 # << files
 
 %files devel
 %defattr(-,root,root,-)
-# >> files devel
-%doc COPYING
 %{_libdir}/libngf-qt.so
 %{_includedir}/ngf-qt/*.h
 %{_includedir}/ngf-qt/NgfClient
 %{_libdir}/pkgconfig/ngf-qt.pc
 %{_mandir}/man3/Ngf_Client.3.gz
+# >> files devel
+%doc COPYING
 # << files devel
 
 %files declarative
 %defattr(-,root,root,-)
-# >> files declarative
 %{_libdir}/qt4/imports/org/nemomobile/ngf/*
+# >> files declarative
 # << files declarative
