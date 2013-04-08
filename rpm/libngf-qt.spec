@@ -54,9 +54,9 @@ Requires:   %{name} = %{version}-%{release}
 
 %build
 # >> build pre
-%qmake
 # << build pre
 
+%qmake 
 
 make %{?jobs:-j%jobs}
 
@@ -68,7 +68,7 @@ make doc
 rm -rf %{buildroot}
 # >> install pre
 # << install pre
-%make_install
+%qmake_install
 
 # >> install post
 # << install post

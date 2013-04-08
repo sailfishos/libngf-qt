@@ -20,7 +20,7 @@ PkgConfigBR:
     - QtDBus
     - QtDeclarative
 Configure: none
-Builder: make
+Builder: qmake
 SubPackages:
     - Name: devel
       Summary: Development package for Qt-based client library for NGF daemon
