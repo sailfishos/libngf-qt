@@ -82,7 +82,6 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 %{_libdir}/libngf-qt.so.*
 # >> files
-%doc COPYING
 # << files
 
 %files devel
@@ -93,7 +92,6 @@ rm -rf %{buildroot}
 %{_libdir}/pkgconfig/ngf-qt.pc
 %{_mandir}/man3/Ngf_Client.3.gz
 # >> files devel
-%doc COPYING
 # << files devel
 
 %files declarative
