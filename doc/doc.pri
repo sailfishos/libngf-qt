@@ -4,10 +4,3 @@ doc.depends = FORCE
 
 QMAKE_EXTRA_TARGETS += doc
 
-manpage.files = doc/man/man3/*
-manpage.path = $$PREFIX/share/man/man3
-manpage.CONFIG += no_check_exist
-manpage.depends = doc
-
-INSTALLS += manpage
-

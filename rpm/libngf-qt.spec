@@ -90,7 +90,6 @@ rm -rf %{buildroot}
 %{_includedir}/ngf-qt/*.h
 %{_includedir}/ngf-qt/NgfClient
 %{_libdir}/pkgconfig/ngf-qt.pc
-%{_mandir}/man3/Ngf_Client.3.gz
 # >> files devel
 # << files devel
 
