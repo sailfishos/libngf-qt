@@ -22,7 +22,7 @@ PkgConfigBR:
     - Qt5Qml # temporary, try remove after qt5.0.2 (.pc file doesn't specify Requires properly)
     - Qt5Gui # temporary, try remove after qt5.0.2  (.pc file doesn't specify Requires properly)
 Configure: none
-Builder: qmake
+Builder: qmake5
 Files:
     - "%{_libdir}/libngf-qt5.so.*"
 SubPackages:
