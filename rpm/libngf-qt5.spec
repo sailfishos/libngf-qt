@@ -94,6 +94,6 @@ rm -rf %{buildroot}
 
 %files declarative
 %defattr(-,root,root,-)
-%{_libdir}/qt5/imports/org/nemomobile/ngf/*
+%{_libdir}/qt5/qml/org/nemomobile/ngf/*
 # >> files declarative
 # << files declarative

@@ -41,5 +41,5 @@ SubPackages:
       Group: Development/Libraries
       Description: "%{summary}."
       Files:
-          - "%{_libdir}/qt5/imports/org/nemomobile/ngf/*"
+          - "%{_libdir}/qt5/qml/org/nemomobile/ngf/*"
 
