@@ -1,5 +1,4 @@
-equals(QT_MAJOR_VERSION, 4): TARGET = libngf-declarative
-equals(QT_MAJOR_VERSION, 5): TARGET = libngf-declarative5
+TARGET = ngf-declarative
 PLUGIN_IMPORT_PATH = org/nemomobile/ngf
 
 LIBS += -L../src/
@@ -18,9 +17,10 @@ CONFIG += qt plugin hide_symbols
 equals(QT_MAJOR_VERSION, 4): QT += declarative
 equals(QT_MAJOR_VERSION, 5): QT += quick
 
-target.path = $$[QT_INSTALL_IMPORTS]/$$PLUGIN_IMPORT_PATH
+equals(QT_MAJOR_VERSION, 4): target.path = $$[QT_INSTALL_IMPORTS]/$$PLUGIN_IMPORT_PATH
+equals(QT_MAJOR_VERSION, 5): target.path = $$[QT_INSTALL_QML]/$$PLUGIN_IMPORT_PATH
 INSTALLS += target
 
 qmldir.files += $$PWD/qmldir
-qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$$$PLUGIN_IMPORT_PATH
+qmldir.path +=  $$target.path
 INSTALLS += qmldir

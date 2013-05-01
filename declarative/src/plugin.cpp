@@ -31,6 +31,7 @@
 
 class Q_DECL_EXPORT NgfPlugin : public QDeclarativeExtensionPlugin
 {
+    Q_OBJECT
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
     Q_PLUGIN_METADATA(IID "org.nemomobile.ngf")
 #endif
@@ -55,3 +56,6 @@ public:
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 Q_EXPORT_PLUGIN2(ngfplugin, NgfPlugin);
 #endif // < 5.0.0
+
+#include "plugin.moc"
+
