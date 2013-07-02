@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<testdefinition version="0.1">
+
+    <suite name="libngf-qt">
+
+        <set name="libngf-qt@NODASH_QT_VERSION@">
+
+            <description>libngf-qt@NODASH_QT_VERSION@ tests</description>
+
+            <case name="ut_client">
+                <description>Tests the Ngf::Client class</description>
+                <step>@INSTALL_TESTDIR@/ut_client</step>
+            </case>
+
+            <case name="ut_declarativengfevent">
+                <description>Tests the NonGraphicalFeedback declarative item</description>
+                <step>@INSTALL_TESTDIR@/ut_declarativengfevent</step>
+            </case>
+
+        </set>
+
+    </suite>
+
+</testdefinition>

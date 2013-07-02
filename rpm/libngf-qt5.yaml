@@ -21,6 +21,7 @@ PkgConfigBR:
     - Qt5Quick
     - Qt5Qml # temporary, try remove after qt5.0.2 (.pc file doesn't specify Requires properly)
     - Qt5Gui # temporary, try remove after qt5.0.2  (.pc file doesn't specify Requires properly)
+    - Qt5Test
 Configure: none
 Builder: qmake5
 Files:
@@ -42,4 +43,11 @@ SubPackages:
       Description: "%{summary}."
       Files:
           - "%{_libdir}/qt5/qml/org/nemomobile/ngf/*"
+
+    - Name: tests
+      Summary: Test suite for libngf-qt5
+      Group: System/Libraries
+      Description: "%{summary}."
+      Files:
+          - "/opt/tests/libngf-qt5/*"
 

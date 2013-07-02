@@ -19,6 +19,7 @@ PkgConfigBR:
     - QtCore
     - QtDBus
     - QtDeclarative
+    - QtTest
 Configure: none
 Builder: qmake
 Files:
@@ -40,4 +41,11 @@ SubPackages:
       Description: "%{summary}."
       Files:
           - "%{_libdir}/qt4/imports/org/nemomobile/ngf/*"
+
+    - Name: tests
+      Summary: Test suite for libngf-qt
+      Group: System/Libraries
+      Description: "%{summary}."
+      Files:
+          - "/opt/tests/libngf-qt/*"
 
