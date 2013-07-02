@@ -10,9 +10,6 @@ TARGET = ngf-qt$${NODASH_QT_VERSION}
 DEFINES += NGFCLIENT_LIBRARY
 CONFIG += create_pc create_prl no_install_prl
 
-OBJECTS_DIR = .obj
-MOC_DIR = .moc
-
 INCLUDEPATH += include
 include(dbus/dbus.pri)
 
