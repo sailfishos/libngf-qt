@@ -12,3 +12,5 @@ count(EXAMPLE, 1) {
 
 include(doc/doc.pri)
 
+# adds 'coverage' make target
+include(coverage.pri)
