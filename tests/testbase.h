@@ -118,19 +118,31 @@ private:
     QSet<QString> m_paused;
 };
 
+/*
+ * QSignalSpy is inherited to fix two issues when used together with QDBusInterface:
+ *
+ * 1. QDBusInterface relies on QObject::connectNotify() to connect the D-Bus signal immediately when
+ *    QObject::connect() is called. QSignalSpy uses internal version of QObject::connect() which
+ *    does not call connectNotify(). This issue is fixed as a side effect of the fix to the second
+ *    issue -- otherwise it would be necessary to invoke connectNotify() explicitely upon SignalSpy
+ *    construction.
+ * 2. TestBase::waitForSignals() uses combination of SignalSpy and QEventLoop to wait for signals.
+ *    It connects the signals to QEventLoop::quit(). When used together with QDBusInterface, it is
+ *    usually too late to connect -- that is why the signalEmitted() signal exists.
+ */
 class TestBase::SignalSpy : public QSignalSpy
 {
+    Q_OBJECT
+
 public:
     SignalSpy(QObject *object, const char *signal)
-        : QSignalSpy(object, signal),
-          m_object(object)
+        : QSignalSpy(object, signal)
     {
+        connect(object, signal, this, SIGNAL(signalEmitted()));
     }
 
-    QObject *object() const { return m_object; }
-
-private:
-    QPointer<QObject> m_object;
+signals:
+    void signalEmitted();
 };
 
 inline TestBase::TestBase()
@@ -187,8 +199,7 @@ inline bool TestBase::waitForSignals(const SignalSpyList &signalSpies)
 
     connect(&timeoutTimer, SIGNAL(timeout()), &loop, SLOT(quit()));
     foreach (SignalSpy *signalSpy, signalSpies) {
-        connect(signalSpy->object(), signalSpy->signal().prepend(QSIGNAL_CODE),
-                &loop, SLOT(quit()));
+        connect(signalSpy, SIGNAL(signalEmitted()), &loop, SLOT(quit()));
     }
 
     timeoutTimer.start(SIGNAL_WAIT_TIMEOUT);
