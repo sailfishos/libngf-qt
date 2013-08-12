@@ -1,9 +1,9 @@
+include(../common.pri)
+
 TARGET = ngf-declarative
 PLUGIN_IMPORT_PATH = org/nemomobile/ngf
 
-LIBS += -L../src/
-equals(QT_MAJOR_VERSION, 4): LIBS += -lngf-qt
-equals(QT_MAJOR_VERSION, 5): LIBS += -lngf-qt5
+LIBS += -L../src/ -lngf-qt$${NODASH_QT_VERSION}
 
 INCLUDEPATH += ../src/include
 

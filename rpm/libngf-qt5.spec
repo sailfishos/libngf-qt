@@ -24,6 +24,7 @@ BuildRequires:  pkgconfig(Qt5DBus)
 BuildRequires:  pkgconfig(Qt5Quick)
 BuildRequires:  pkgconfig(Qt5Qml)
 BuildRequires:  pkgconfig(Qt5Gui)
+BuildRequires:  pkgconfig(Qt5Test)
 BuildRequires:  doxygen
 
 %description
@@ -45,6 +46,14 @@ Group:      Development/Libraries
 Requires:   %{name} = %{version}-%{release}
 
 %description declarative
+%{summary}.
+
+%package tests
+Summary:    Test suite for libngf-qt5
+Group:      System/Libraries
+Requires:   %{name} = %{version}-%{release}
+
+%description tests
 %{summary}.
 
 %prep
@@ -97,3 +106,9 @@ rm -rf %{buildroot}
 %{_libdir}/qt5/qml/org/nemomobile/ngf/*
 # >> files declarative
 # << files declarative
+
+%files tests
+%defattr(-,root,root,-)
+/opt/tests/libngf-qt5/*
+# >> files tests
+# << files tests

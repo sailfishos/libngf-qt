@@ -239,6 +239,7 @@ void Ngf::ClientPrivate::playPendingReply(QDBusPendingCallWatcher *watcher)
                 quint32 server_event_id = reply.argumentAt<0>();
                 m_events[i].server_event_id = server_event_id;
                 m_events[i].watcher = 0;
+                emit q_ptr->eventPlaying(m_events.at(i).client_event_id);
             }
         }
     }
