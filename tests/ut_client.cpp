@@ -27,6 +27,7 @@ private slots:
     void testFail();
     void testPlayFail();
     void testConnectionStatus();
+    void testFastPlayStop();
 
 private:
     QPointer<Client> m_client;
@@ -232,6 +233,25 @@ void UtClient::testConnectionStatus()
             expected.removeAt(0);
         }
     }
+}
+
+void UtClient::testFastPlayStop()
+{
+    QDBusInterface client(service(), path(),interface(), bus());
+
+    SignalSpy eventCompletedSpy(m_client, SIGNAL(eventCompleted(quint32)));
+
+    QVariantMap properties;
+    properties["foo"] = "fooval";
+    properties["bar"] = 42;
+
+    quint32 id = m_client->play("an-event", properties);
+    QVERIFY(id > 0);
+    QVERIFY(m_client->stop("an-event"));
+
+    QVERIFY(waitForSignal(&eventCompletedSpy));
+    QCOMPARE(eventCompletedSpy.count(), 1);
+    QCOMPARE(eventCompletedSpy.at(0).at(0).toUInt(), 4u);
 }
 
 TEST_MAIN(UtClient)
