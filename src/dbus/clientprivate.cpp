@@ -126,6 +126,8 @@ void Ngf::ClientPrivate::disconnect()
     m_connection.disconnectFromBus("ngfclientpp");
 
     m_client_event_id = 0;
+
+    emit q_ptr->connectionStatus(false);
 }
 
 // Watch for NameOwnerChanged for NGF daemon, and disconnect and reconnect according to
