@@ -25,6 +25,7 @@
 #include <QDBusConnection>
 #include <QDBusPendingCallWatcher>
 #include <QList>
+#include <QLoggingCategory>
 #include "ngfclient.h"
 
 namespace Ngf
@@ -53,23 +54,33 @@ namespace Ngf
         bool stop(const quint32 &event_id);
         bool stop(const QString &event);
 
+        enum EventState {
+            StateNew,
+            StatePlaying,
+            StatePaused,
+            StateStopped
+        };
+
     private slots:
         void playPendingReply(QDBusPendingCallWatcher *watcher);
         void eventStatus(const quint32 &server_event_id, const quint32 &state);
         void ngfdStatus(const QString &service, const QString &arg1, const QString &arg2);
 
     private:
-        void removeAt(const int &i);
-        bool doCall(const QString &event, const quint32 &client_event_id, const QVariant *extra_arg);
-        bool doCall(const QString &event, const QString &client_event_name, const QVariant *extra_arg);
+        void setEventState(Event *event, EventState wanted_state);
+        void removeEvent(Event *event);
+        void removeAllEvents();
+        bool changeState(const quint32 &client_event_id, EventState wanted_state);
+        bool changeState(const QString &client_event_name, EventState wanted_state);
 
         Client * const q_ptr;
         Q_DECLARE_PUBLIC(Client);
 
+        QLoggingCategory m_log;
         QDBusConnection m_connection;
         QDBusInterface *m_iface;
         quint32 m_client_event_id; // Internal counter for client event ids, incremented every time play is called.
-        QList<Event> m_events;
+        QList<Event*> m_events;
     };
 
 };
