@@ -110,7 +110,7 @@ void UtClient::testPause()
 {
     QDBusInterface client(service(), path(),interface(), bus());
 
-    SignalSpy pauseCalledSpy(&client, SIGNAL(mock_pauseCalled(uint,bool)));
+    SignalSpy pauseCalledSpy(&client, SIGNAL(mock_pauseCalled(quint32,bool)));
 
     SignalSpy eventPausedSpy(m_client, SIGNAL(eventPaused(quint32)));
 

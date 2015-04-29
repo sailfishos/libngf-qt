@@ -185,7 +185,7 @@ void UtDeclarativeNgfEvent::testPause()
     QVERIFY2(!statusExpression.hasError(), qPrintable(statusExpression.error().toString()));
     SignalSpy statusSpy(&statusExpression, SIGNAL(valueChanged()));
 
-    SignalSpy pauseCalledSpy(&client, SIGNAL(mock_pauseCalled(uint,bool)));
+    SignalSpy pauseCalledSpy(&client, SIGNAL(mock_pauseCalled(quint32,bool)));
 
     QDeclarativeExpression pauseExpression(m_engine->rootContext(), m_instance, "pause()");
     pauseExpression.evaluate();

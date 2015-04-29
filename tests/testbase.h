@@ -107,7 +107,7 @@ signals:
 
     // mock API
     Q_SCRIPTABLE void mock_playCalled(const QString &event, const QVariantMap &properties);
-    Q_SCRIPTABLE void mock_pauseCalled(uint event, bool pause); // FIXME: does not work with quint32
+    Q_SCRIPTABLE void mock_pauseCalled(quint32 event, bool pause);
     Q_SCRIPTABLE void mock_stopCalled(quint32 event);
 
 private:
