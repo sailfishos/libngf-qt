@@ -356,16 +356,6 @@ void UtDeclarativeNgfEvent::testPlayFail()
 
 void UtDeclarativeNgfEvent::testConnectionStatus()
 {
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-    QSKIP("Current Ngf::Client implementation does not guarantee connectionStatus(bool) "
-            "is only emited when the value actually changes - would not be able to verify. "
-            "Enable this test case when fixed.", SkipAll);
-#else
-    QSKIP("Current Ngf::Client implementation does not guarantee connectionStatus(bool) "
-            "is only emited when the value actually changes - would not be able to verify. "
-            "Enable this test case when fixed.");
-#endif
-
     QDBusInterface client(service(), path(), interface(), bus());
 
     DeclarativeExpression connectedExpression(m_engine->rootContext(), m_instance, "connected");

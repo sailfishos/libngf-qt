@@ -70,14 +70,13 @@ void UtClient::cleanupTestCase()
         return;
     }
 
-    //SignalSpy connectionStatusSpy(m_client, SIGNAL(connectionStatus(bool)));
+    SignalSpy connectionStatusSpy(m_client, SIGNAL(connectionStatus(bool)));
 
     m_client->disconnect();
 
-    // TODO: connectionStatus() signal not emitted on disconnect()
-    //QVERIFY(waitForSignal(&connectionStatusSpy));
-    //QCOMPARE(connectionStatusSpy.count(), 1);
-    //QCOMPARE(connectionStatusSpy.at(0).at(0).toBool(), false);
+    QVERIFY(waitForSignal(&connectionStatusSpy));
+    QCOMPARE(connectionStatusSpy.count(), 1);
+    QCOMPARE(connectionStatusSpy.at(0).at(0).toBool(), false);
 
     QVERIFY(!m_client->isConnected());
 
@@ -218,16 +217,6 @@ void UtClient::testPlayFail()
 
 void UtClient::testConnectionStatus()
 {
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-    QSKIP("Current Ngf::Client implementation does not guarantee connectionStatus(bool) "
-            "is only emited when the value actually changes - would not be able to verify. "
-            "Enable this test case when fixed.", SkipAll);
-#else
-    QSKIP("Current Ngf::Client implementation does not guarantee connectionStatus(bool) "
-            "is only emited when the value actually changes - would not be able to verify. "
-            "Enable this test case when fixed.");
-#endif
-
     QDBusInterface client(service(), path(),interface(), bus());
 
     SignalSpy connectionStatusSpy(m_client, SIGNAL(connectionStatus(bool)));
