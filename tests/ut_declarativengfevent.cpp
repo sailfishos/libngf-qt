@@ -185,7 +185,7 @@ void UtDeclarativeNgfEvent::testPause()
     QVERIFY2(!statusExpression.hasError(), qPrintable(statusExpression.error().toString()));
     SignalSpy statusSpy(&statusExpression, SIGNAL(valueChanged()));
 
-    SignalSpy pauseCalledSpy(&client, SIGNAL(mock_pauseCalled(uint,bool)));
+    SignalSpy pauseCalledSpy(&client, SIGNAL(mock_pauseCalled(quint32,bool)));
 
     QDeclarativeExpression pauseExpression(m_engine->rootContext(), m_instance, "pause()");
     pauseExpression.evaluate();
@@ -356,16 +356,6 @@ void UtDeclarativeNgfEvent::testPlayFail()
 
 void UtDeclarativeNgfEvent::testConnectionStatus()
 {
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-    QSKIP("Current Ngf::Client implementation does not guarantee connectionStatus(bool) "
-            "is only emited when the value actually changes - would not be able to verify. "
-            "Enable this test case when fixed.", SkipAll);
-#else
-    QSKIP("Current Ngf::Client implementation does not guarantee connectionStatus(bool) "
-            "is only emited when the value actually changes - would not be able to verify. "
-            "Enable this test case when fixed.");
-#endif
-
     QDBusInterface client(service(), path(), interface(), bus());
 
     DeclarativeExpression connectedExpression(m_engine->rootContext(), m_instance, "connected");

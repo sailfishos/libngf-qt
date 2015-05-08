@@ -27,6 +27,7 @@ private slots:
     void testFail();
     void testPlayFail();
     void testConnectionStatus();
+    void testFastPlayStop();
 
 private:
     QPointer<Client> m_client;
@@ -70,14 +71,13 @@ void UtClient::cleanupTestCase()
         return;
     }
 
-    //SignalSpy connectionStatusSpy(m_client, SIGNAL(connectionStatus(bool)));
+    SignalSpy connectionStatusSpy(m_client, SIGNAL(connectionStatus(bool)));
 
     m_client->disconnect();
 
-    // TODO: connectionStatus() signal not emitted on disconnect()
-    //QVERIFY(waitForSignal(&connectionStatusSpy));
-    //QCOMPARE(connectionStatusSpy.count(), 1);
-    //QCOMPARE(connectionStatusSpy.at(0).at(0).toBool(), false);
+    QVERIFY(waitForSignal(&connectionStatusSpy));
+    QCOMPARE(connectionStatusSpy.count(), 1);
+    QCOMPARE(connectionStatusSpy.at(0).at(0).toBool(), false);
 
     QVERIFY(!m_client->isConnected());
 
@@ -111,7 +111,7 @@ void UtClient::testPause()
 {
     QDBusInterface client(service(), path(),interface(), bus());
 
-    SignalSpy pauseCalledSpy(&client, SIGNAL(mock_pauseCalled(uint,bool)));
+    SignalSpy pauseCalledSpy(&client, SIGNAL(mock_pauseCalled(quint32,bool)));
 
     SignalSpy eventPausedSpy(m_client, SIGNAL(eventPaused(quint32)));
 
@@ -218,16 +218,6 @@ void UtClient::testPlayFail()
 
 void UtClient::testConnectionStatus()
 {
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-    QSKIP("Current Ngf::Client implementation does not guarantee connectionStatus(bool) "
-            "is only emited when the value actually changes - would not be able to verify. "
-            "Enable this test case when fixed.", SkipAll);
-#else
-    QSKIP("Current Ngf::Client implementation does not guarantee connectionStatus(bool) "
-            "is only emited when the value actually changes - would not be able to verify. "
-            "Enable this test case when fixed.");
-#endif
-
     QDBusInterface client(service(), path(),interface(), bus());
 
     SignalSpy connectionStatusSpy(m_client, SIGNAL(connectionStatus(bool)));
@@ -243,6 +233,25 @@ void UtClient::testConnectionStatus()
             expected.removeAt(0);
         }
     }
+}
+
+void UtClient::testFastPlayStop()
+{
+    QDBusInterface client(service(), path(),interface(), bus());
+
+    SignalSpy eventCompletedSpy(m_client, SIGNAL(eventCompleted(quint32)));
+
+    QVariantMap properties;
+    properties["foo"] = "fooval";
+    properties["bar"] = 42;
+
+    quint32 id = m_client->play("an-event", properties);
+    QVERIFY(id > 0);
+    QVERIFY(m_client->stop("an-event"));
+
+    QVERIFY(waitForSignal(&eventCompletedSpy));
+    QCOMPARE(eventCompletedSpy.count(), 1);
+    QCOMPARE(eventCompletedSpy.at(0).at(0).toUInt(), 4u);
 }
 
 TEST_MAIN(UtClient)
