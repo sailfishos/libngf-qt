@@ -67,6 +67,8 @@ Ngf::ClientPrivate::ClientPrivate(Client *parent)
       q_ptr(parent),
       m_log("ngf.client"),
       m_connection("ngfclientpp"),
+      m_available(false),
+      m_connected(false),
       m_iface(0),
       m_client_event_id(0)
 {
@@ -90,6 +92,7 @@ bool Ngf::ClientPrivate::connect()
     if (!m_connection.isConnected()) {
         m_connection = QDBusConnection::systemBus();
         new_connection = true;
+        changeAvailable(false);
     }
 
     if (m_connection.isConnected()) {
@@ -97,6 +100,32 @@ bool Ngf::ClientPrivate::connect()
         if (new_connection)
             m_connection.connect("", "/org/freedesktop/DBus", "org.freedesktop.DBus", "NameOwnerChanged",
                                  this, SLOT(ngfdStatus(const QString&, const QString&, const QString&)));
+
+        // When connecting to bus for the first time, check whether NGFD exists in the bus.
+        // After we know the initial state it is enough to follow NameOwnerChanged.
+        if (new_connection && !m_available) {
+            QDBusMessage msg = QDBusMessage::createMethodCall("org.freedesktop.DBus",
+                                                              "/org/freedesktop/DBus",
+                                                              "org.freedesktop.DBus",
+                                                              "GetNameOwner");
+            QList<QVariant> args;
+            args << NgfDestination;
+            msg.setArguments(args);
+
+            QDBusMessage reply = m_connection.call(msg);
+
+            if (reply.type() == QDBusMessage::ErrorMessage) {
+                changeConnected(false);
+                changeAvailable(false);
+                return false;
+            } else
+                changeAvailable(true);
+        }
+
+        if (!m_available) {
+            changeConnected(false);
+            return false;
+        }
 
         QDBusInterface *iface = 0;
         iface = new QDBusInterface(NgfDestination, NgfPath, NgfInterface,
@@ -113,7 +142,7 @@ bool Ngf::ClientPrivate::connect()
             iface->deleteLater();
     }
 
-    emit q_ptr->connectionStatus(connection_status);
+    changeConnected(connection_status);
     return connection_status;
 }
 
@@ -127,7 +156,7 @@ void Ngf::ClientPrivate::disconnect()
 
     m_client_event_id = 0;
 
-    emit q_ptr->connectionStatus(false);
+    changeConnected(false);
 }
 
 // Watch for NameOwnerChanged for NGF daemon, and disconnect and reconnect according to
@@ -137,16 +166,18 @@ void Ngf::ClientPrivate::ngfdStatus(const QString &service, const QString &arg1,
     if (service == NgfDestination) {
         if (arg1.size() == 0 && arg2.size() > 0) {
             // NGFD has reappeared in system bus, let's reconnect
+            changeAvailable(true);
             connect();
         } else if (arg1.size() > 0 && arg2.size() == 0) {
             // NGFD has died for some reason
+            changeAvailable(false);
             QDBusInterface *iface = m_iface;
             m_iface = 0;
             // All currently active events are invalid, so clear event list
             removeAllEvents();
             if (iface) {
                 // Signal that we are disconnected
-                emit q_ptr->connectionStatus(false);
+                changeConnected(false);
                 iface->deleteLater();
             }
         }
@@ -155,7 +186,7 @@ void Ngf::ClientPrivate::ngfdStatus(const QString &service, const QString &arg1,
 
 bool Ngf::ClientPrivate::isConnected()
 {
-    return (m_connection.isConnected() && m_iface);
+    return m_iface;
 }
 
 void Ngf::ClientPrivate::eventStatus(const quint32 &server_event_id, const quint32 &state)
@@ -387,5 +418,21 @@ void Ngf::ClientPrivate::setEventState(Event *event, EventState wanted_state)
 
         case StateNew:
             break;
+    }
+}
+
+void Ngf::ClientPrivate::changeAvailable(bool available)
+{
+    if (m_available != available) {
+        m_available = available;
+        qCDebug(m_log) << "NGFD available changes to" << m_available;
+    }
+}
+
+void Ngf::ClientPrivate::changeConnected(bool connected)
+{
+    if (m_connected != connected) {
+        m_connected = connected;
+        emit q_ptr->connectionStatus(m_connected);
     }
 }

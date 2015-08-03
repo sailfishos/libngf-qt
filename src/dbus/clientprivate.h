@@ -72,12 +72,16 @@ namespace Ngf
         void removeAllEvents();
         bool changeState(const quint32 &client_event_id, EventState wanted_state);
         bool changeState(const QString &client_event_name, EventState wanted_state);
+        void changeAvailable(bool available);
+        void changeConnected(bool connected);
 
         Client * const q_ptr;
         Q_DECLARE_PUBLIC(Client);
 
         QLoggingCategory m_log;
         QDBusConnection m_connection;
+        bool m_available;
+        bool m_connected;
         QDBusInterface *m_iface;
         quint32 m_client_event_id; // Internal counter for client event ids, incremented every time play is called.
         QList<Event*> m_events;
