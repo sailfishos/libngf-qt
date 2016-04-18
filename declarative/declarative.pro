@@ -24,3 +24,7 @@ INSTALLS += target
 qmldir.files += $$PWD/qmldir
 qmldir.path +=  $$target.path
 INSTALLS += qmldir
+
+qmltypes.files += $$PWD/plugins.qmltypes
+qmltypes.path +=  $$target.path
+INSTALLS += qmltypes
