@@ -66,7 +66,8 @@ Ngf::ClientPrivate::ClientPrivate(Client *parent)
     : QObject(parent),
       q_ptr(parent),
       m_log("ngf.client"),
-      m_connection("ngfclientpp"),
+      m_serviceWatcher(0),
+      m_connectionWanted(false),
       m_available(false),
       m_connected(false),
       m_iface(0),
@@ -83,105 +84,105 @@ Ngf::ClientPrivate::~ClientPrivate()
 
 bool Ngf::ClientPrivate::connect()
 {
-    bool new_connection = false;
-    bool connection_status = false;
+    m_connectionWanted = true;
 
     if (m_iface)
         return true;
 
-    if (!m_connection.isConnected()) {
-        m_connection = QDBusConnection::systemBus();
-        new_connection = true;
-        changeAvailable(false);
-    }
+    if (!m_serviceWatcher) {
+        m_serviceWatcher = new QDBusServiceWatcher(NgfDestination,
+                                                   QDBusConnection::systemBus(),
+                                                   QDBusServiceWatcher::WatchForRegistration |
+                                                     QDBusServiceWatcher::WatchForUnregistration,
+                                                   this);
 
-    if (m_connection.isConnected()) {
-        // Connect NameOwnerChanged signal only the first time we connect to DBus bus.
-        if (new_connection)
-            m_connection.connect("", "/org/freedesktop/DBus", "org.freedesktop.DBus", "NameOwnerChanged",
-                                 this, SLOT(ngfdStatus(const QString&, const QString&, const QString&)));
+        QObject::connect(m_serviceWatcher, SIGNAL(serviceRegistered(const QString&)),
+                         this, SLOT(serviceRegistered(const QString&)));
+        QObject::connect(m_serviceWatcher, SIGNAL(serviceUnregistered(const QString&)),
+                         this, SLOT(serviceUnregistered(const QString&)));
 
         // When connecting to bus for the first time, check whether NGFD exists in the bus.
         // After we know the initial state it is enough to follow NameOwnerChanged.
-        if (new_connection && !m_available) {
-            QDBusMessage msg = QDBusMessage::createMethodCall("org.freedesktop.DBus",
-                                                              "/org/freedesktop/DBus",
-                                                              "org.freedesktop.DBus",
-                                                              "GetNameOwner");
-            QList<QVariant> args;
-            args << NgfDestination;
-            msg.setArguments(args);
+        QDBusMessage msg = QDBusMessage::createMethodCall(QStringLiteral("org.freedesktop.DBus"),
+                                                          QStringLiteral("/org/freedesktop/DBus"),
+                                                          QStringLiteral("org.freedesktop.DBus"),
+                                                          QStringLiteral("GetNameOwner"));
+        QList<QVariant> args;
+        args << NgfDestination;
+        msg.setArguments(args);
 
-            QDBusMessage reply = m_connection.call(msg);
+        QDBusMessage reply = QDBusConnection::systemBus().call(msg);
 
-            if (reply.type() == QDBusMessage::ErrorMessage) {
-                changeConnected(false);
-                changeAvailable(false);
-                return false;
-            } else
-                changeAvailable(true);
-        }
-
-        if (!m_available) {
+        if (reply.type() == QDBusMessage::ErrorMessage) {
             changeConnected(false);
+            changeAvailable(false);
             return false;
-        }
+        } else
+            changeAvailable(true);
+    }
 
-        QDBusInterface *iface = 0;
-        iface = new QDBusInterface(NgfDestination, NgfPath, NgfInterface,
-                                   m_connection, 0);
+    if (!m_available) {
+        changeConnected(false);
+        return false;
+    }
 
-        // Match NGFD signals to get statuses for ongoing events
-        if (iface && iface->isValid()) {
-            m_connection.connect(QString(), NgfPath, NgfInterface, SignalStatus,
-                                 this, SLOT(eventStatus(const quint32&, const quint32&)));
+    QDBusInterface *iface;
+    iface = new QDBusInterface(NgfDestination, NgfPath, NgfInterface,
+                               QDBusConnection::systemBus(), this);
 
+    // Match NGFD signals to get statuses for ongoing events
+    if (iface) {
+        if (iface->isValid()) {
+            iface->connection().connect(QStringLiteral(""), NgfPath, NgfInterface, SignalStatus,
+                                        this, SLOT(eventStatus(const quint32&, const quint32&)));
             m_iface = iface;
-            connection_status = true;
+            changeConnected(true);
         } else
             iface->deleteLater();
     }
 
-    changeConnected(connection_status);
-    return connection_status;
+    return m_connected;
 }
 
 void Ngf::ClientPrivate::disconnect()
 {
+    m_connectionWanted = false;
+
     if (m_iface) {
         m_iface->deleteLater();
         m_iface = 0;
     }
-    m_connection.disconnectFromBus("ngfclientpp");
-
-    m_client_event_id = 0;
 
     changeConnected(false);
 }
 
-// Watch for NameOwnerChanged for NGF daemon, and disconnect and reconnect according to
-// NGFd availability
-void Ngf::ClientPrivate::ngfdStatus(const QString &service, const QString &arg1, const QString &arg2)
+void Ngf::ClientPrivate::serviceRegistered(const QString &service)
 {
-    if (service == NgfDestination) {
-        if (arg1.size() == 0 && arg2.size() > 0) {
-            // NGFD has reappeared in system bus, let's reconnect
-            changeAvailable(true);
-            connect();
-        } else if (arg1.size() > 0 && arg2.size() == 0) {
-            // NGFD has died for some reason
-            changeAvailable(false);
-            QDBusInterface *iface = m_iface;
-            m_iface = 0;
-            // All currently active events are invalid, so clear event list
-            removeAllEvents();
-            if (iface) {
-                // Signal that we are disconnected
-                changeConnected(false);
-                iface->deleteLater();
-            }
-        }
+    Q_UNUSED(service);
+
+    changeAvailable(true);
+
+    // NGFD has reappeared in system bus, let's reconnect
+    if (m_connectionWanted)
+        connect();
+}
+
+void Ngf::ClientPrivate::serviceUnregistered(const QString &service)
+{
+    Q_UNUSED(service);
+
+    // NGFD has died for some reason
+    changeAvailable(false);
+    // All currently active events are invalid, so clear event list
+    removeAllEvents();
+    if (m_iface) {
+        m_iface->deleteLater();
+        m_iface = 0;
     }
+
+    // Signal that we are disconnected
+    if (m_connectionWanted)
+        changeConnected(false);
 }
 
 bool Ngf::ClientPrivate::isConnected()

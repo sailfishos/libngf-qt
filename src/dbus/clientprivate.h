@@ -24,6 +24,7 @@
 #include <QObject>
 #include <QDBusConnection>
 #include <QDBusPendingCallWatcher>
+#include <QDBusServiceWatcher>
 #include <QList>
 #include <QLoggingCategory>
 #include "ngfclient.h"
@@ -64,7 +65,8 @@ namespace Ngf
     private slots:
         void playPendingReply(QDBusPendingCallWatcher *watcher);
         void eventStatus(const quint32 &server_event_id, const quint32 &state);
-        void ngfdStatus(const QString &service, const QString &arg1, const QString &arg2);
+        void serviceRegistered(const QString &service);
+        void serviceUnregistered(const QString &service);
 
     private:
         void setEventState(Event *event, EventState wanted_state);
@@ -79,7 +81,8 @@ namespace Ngf
         Q_DECLARE_PUBLIC(Client);
 
         QLoggingCategory m_log;
-        QDBusConnection m_connection;
+        QDBusServiceWatcher *m_serviceWatcher;
+        bool m_connectionWanted;
         bool m_available;
         bool m_connected;
         QDBusInterface *m_iface;
