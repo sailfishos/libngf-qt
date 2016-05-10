@@ -48,11 +48,11 @@ namespace Ngf
         void disconnect();
         quint32 play(const QString &event);
         quint32 play(const QString &event, const Proplist &properties);
-        bool pause(const quint32 &event_id);
+        bool pause(const quint32 &eventId);
         bool pause(const QString &event);
-        bool resume(const quint32 &event_id);
+        bool resume(const quint32 &eventId);
         bool resume(const QString &event);
-        bool stop(const quint32 &event_id);
+        bool stop(const quint32 &eventId);
         bool stop(const QString &event);
 
         enum EventState {
@@ -64,16 +64,16 @@ namespace Ngf
 
     private slots:
         void playPendingReply(QDBusPendingCallWatcher *watcher);
-        void eventStatus(const quint32 &server_event_id, const quint32 &state);
+        void eventStatus(const quint32 &serverEventId, const quint32 &state);
         void serviceRegistered(const QString &service);
         void serviceUnregistered(const QString &service);
 
     private:
-        void setEventState(Event *event, EventState wanted_state);
+        void setEventState(Event *event, EventState wantedState);
         void removeEvent(Event *event);
         void removeAllEvents();
-        bool changeState(const quint32 &client_event_id, EventState wanted_state);
-        bool changeState(const QString &client_event_name, EventState wanted_state);
+        bool changeState(const quint32 &clientEventId, EventState wantedState);
+        bool changeState(const QString &clientEventName, EventState wantedState);
         void changeAvailable(bool available);
         void changeConnected(bool connected);
 
@@ -86,7 +86,7 @@ namespace Ngf
         bool m_available;
         bool m_connected;
         QDBusInterface *m_iface;
-        quint32 m_client_event_id; // Internal counter for client event ids, incremented every time play is called.
+        quint32 m_clientEventId; // Internal counter for client event ids, incremented every time play is called.
         QList<Event*> m_events;
     };
 
