@@ -1,7 +1,7 @@
 Ngf::Client
 ===========
 
-Source: https://github.com/nemomobile/libngf-qt
+Source: https://git.merproject.org/mer-core/libngf-qt/
 
 Qt-based client for NGF daemon (Non-Graphic Feedback).
 
