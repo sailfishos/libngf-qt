@@ -1,7 +1,7 @@
 include(../common.pri)
 
 TEMPLATE = lib
-VERSION = 0.1
+VERSION = 0.4.0
 
 QT -= gui
 QT += core dbus
