@@ -3,9 +3,9 @@
 
     <suite name="libngf-qt">
 
-        <set name="libngf-qt@NODASH_QT_VERSION@">
+        <set name="libngf-qt5">
 
-            <description>libngf-qt@NODASH_QT_VERSION@ tests</description>
+            <description>libngf-qt5 tests</description>
 
             <case name="ut_client">
                 <description>Tests the Ngf::Client class</description>

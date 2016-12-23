@@ -12,7 +12,7 @@ HEADERS = testbase.h
 SOURCES = $${pro_file_basename}.cpp
 
 INCLUDEPATH += ../src/include
-LIBS += -L../src -lngf-qt$${NODASH_QT_VERSION}
+LIBS += -L../src -lngf-qt5
 
 target.path = $${INSTALL_TESTDIR}
 INSTALLS += target

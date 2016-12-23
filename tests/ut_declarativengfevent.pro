@@ -1,7 +1,6 @@
 include(testapplication.pri)
 
-equals(QT_MAJOR_VERSION, 4): QT += declarative
-equals(QT_MAJOR_VERSION, 5): QT += quick
+QT += quick
 
 check.commands = '\
     cd "$${OUT_PWD}" \
