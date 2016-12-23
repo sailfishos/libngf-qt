@@ -1,7 +1,7 @@
 include(../common.pri)
 
 TARGET = ngf-declarative
-PLUGIN_IMPORT_PATH = org/nemomobile/ngf
+PLUGIN_IMPORT_PATH = Nemo/Ngf
 
 LIBS += -L../src/ -lngf-qt5
 

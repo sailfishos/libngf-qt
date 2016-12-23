@@ -60,6 +60,10 @@ make %{?jobs:-j%jobs}
 rm -rf %{buildroot}
 %qmake_install
 
+# org.nemomobile.ngf legacy import
+mkdir -p %{buildroot}%{_libdir}/qt5/qml/org/nemomobile/ngf/
+ln -sf %{_libdir}/qt5/qml/Nemo/Ngf/libngf-declarative.so %{buildroot}%{_libdir}/qt5/qml/org/nemomobile/ngf/
+sed 's/Nemo.Ngf/org.nemomobile.ngf/' < declarative/qmldir > %{buildroot}%{_libdir}/qt5/qml/org/nemomobile/ngf/qmldir
 
 %post -p /sbin/ldconfig
 
@@ -78,6 +82,11 @@ rm -rf %{buildroot}
 
 %files declarative
 %defattr(-,root,root,-)
+%dir %{_libdir}/qt5/qml/Nemo/Ngf
+%{_libdir}/qt5/qml/Nemo/Ngf/*
+
+# org.nemomobile.ngf legacy import
+%dir %{_libdir}/qt5/qml/org/nemomobile/ngf
 %{_libdir}/qt5/qml/org/nemomobile/ngf/*
 
 %files tests

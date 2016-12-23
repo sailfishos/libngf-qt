@@ -24,21 +24,21 @@
 class Q_DECL_EXPORT NgfPlugin : public QQmlExtensionPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.nemomobile.ngf")
+    Q_PLUGIN_METADATA(IID "Nemo.Ngf")
 
 public:
     virtual ~NgfPlugin() { }
 
     void initializeEngine(QQmlEngine *engine, const char *uri)
     {
-        Q_ASSERT(uri == QLatin1String("org.nemomobile.ngf"));
+        Q_ASSERT(uri == QLatin1String("Nemo.Ngf") || uri == QLatin1String("org.nemomobile.ngf"));
         Q_UNUSED(uri);
         Q_UNUSED(engine);
     }
 
     void registerTypes(const char *uri)
     {
-        Q_ASSERT(uri == QLatin1String("org.nemomobile.ngf"));
+        Q_ASSERT(uri == QLatin1String("Nemo.Ngf") || uri == QLatin1String("org.nemomobile.ngf"));
 
         qmlRegisterType<DeclarativeNgfEvent>(uri, 1, 0, "NonGraphicalFeedback");
     }

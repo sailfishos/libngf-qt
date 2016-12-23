@@ -90,7 +90,7 @@ void UtDeclarativeNgfEvent::initTestCase()
     m_engine = new QQmlEngine;
     QQmlComponent component(m_engine);
     component.setData(
-        "import org.nemomobile.ngf 1.0\n"
+        "import Nemo.Ngf 1.0\n"
         "NonGraphicalFeedback { id: instance; }",
         QUrl("file:///dev/null"));
     QVERIFY2(component.isReady(),
