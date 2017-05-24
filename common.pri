@@ -37,3 +37,4 @@ defineTest(configure) {
     export(QMAKE_EXTRA_TARGETS)
 }
 
+}
