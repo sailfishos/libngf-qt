@@ -1,2 +1,2 @@
-module org.nemomobile.ngf
+module Nemo.Ngf
 plugin ngf-declarative

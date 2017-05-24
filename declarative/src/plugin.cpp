@@ -16,46 +16,33 @@
  */
 
 #include <QtGlobal>
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-# include <QtQml>
-# include <QQmlEngine>
-# include <QQmlExtensionPlugin>
-# define QDeclarativeEngine QQmlEngine
-# define QDeclarativeExtensionPlugin QQmlExtensionPlugin
-#else
-# include <QtDeclarative>
-# include <QDeclarativeEngine>
-# include <QDeclarativeExtensionPlugin>
-#endif
+#include <QtQml>
+#include <QQmlEngine>
+#include <QQmlExtensionPlugin>
 #include "declarativengfevent.h"
 
-class Q_DECL_EXPORT NgfPlugin : public QDeclarativeExtensionPlugin
+class Q_DECL_EXPORT NgfPlugin : public QQmlExtensionPlugin
 {
     Q_OBJECT
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-    Q_PLUGIN_METADATA(IID "org.nemomobile.ngf")
-#endif
+    Q_PLUGIN_METADATA(IID "Nemo.Ngf")
+
 public:
     virtual ~NgfPlugin() { }
 
-    void initializeEngine(QDeclarativeEngine *engine, const char *uri)
+    void initializeEngine(QQmlEngine *engine, const char *uri)
     {
-        Q_ASSERT(uri == QLatin1String("org.nemomobile.ngf"));
+        Q_ASSERT(uri == QLatin1String("Nemo.Ngf") || uri == QLatin1String("org.nemomobile.ngf"));
         Q_UNUSED(uri);
         Q_UNUSED(engine);
     }
 
     void registerTypes(const char *uri)
     {
-        Q_ASSERT(uri == QLatin1String("org.nemomobile.ngf"));
+        Q_ASSERT(uri == QLatin1String("Nemo.Ngf") || uri == QLatin1String("org.nemomobile.ngf"));
 
         qmlRegisterType<DeclarativeNgfEvent>(uri, 1, 0, "NonGraphicalFeedback");
     }
 };
-
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-Q_EXPORT_PLUGIN2(ngfplugin, NgfPlugin);
-#endif // < 5.0.0
 
 #include "plugin.moc"
 

@@ -1,22 +1,10 @@
 #include <QtCore/QPointer>
 #include <QtDBus/QDBusPendingCallWatcher>
 #include <QtDBus/QDBusReply>
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-# include <QtDeclarative/QDeclarativeComponent>
-# include <QtDeclarative/QDeclarativeEngine>
-# include <QtDeclarative/QDeclarativeExpression>
-# include <QtDeclarative/QDeclarativeProperty>
-#else
-# include <QtQml/QQmlComponent>
-# include <QtQml/QQmlEngine>
-# include <QtQml/QQmlExpression>
-# include <QtQml/QQmlProperty>
-typedef QQmlComponent QDeclarativeComponent;
-typedef QQmlContext QDeclarativeContext;
-typedef QQmlEngine QDeclarativeEngine;
-typedef QQmlExpression QDeclarativeExpression;
-typedef QQmlProperty QDeclarativeProperty;
-#endif
+#include <QtQml/QQmlComponent>
+#include <QtQml/QQmlEngine>
+#include <QtQml/QQmlExpression>
+#include <QtQml/QQmlProperty>
 
 #include "testbase.h"
 #include "moc_testbase.cpp"
@@ -55,19 +43,19 @@ private slots:
     void testConnectionStatus();
 
 private:
-    QPointer<QDeclarativeEngine> m_engine;
-    QPointer<QDeclarativeComponent> m_component;
+    QPointer<QQmlEngine> m_engine;
+    QPointer<QQmlComponent> m_component;
     QPointer<QObject> m_instance;
 };
 
-class UtDeclarativeNgfEvent::DeclarativeExpression : public QDeclarativeExpression
+class UtDeclarativeNgfEvent::DeclarativeExpression : public QQmlExpression
 {
     Q_OBJECT
 
 public:
-    DeclarativeExpression(QDeclarativeContext *ctxt, QObject *scope, const QString &expression,
+    DeclarativeExpression(QQmlContext *ctxt, QObject *scope, const QString &expression,
             QObject *parent = 0)
-        : QDeclarativeExpression(ctxt, scope, expression, parent)
+        : QQmlExpression(ctxt, scope, expression, parent)
     {
         connect(this, SIGNAL(valueChanged()), this, SLOT(emitValueChangedWithValue()));
     }
@@ -99,10 +87,10 @@ void UtDeclarativeNgfEvent::initTestCase()
 {
     QVERIFY(waitForService(service()));
 
-    m_engine = new QDeclarativeEngine;
-    QDeclarativeComponent component(m_engine);
+    m_engine = new QQmlEngine;
+    QQmlComponent component(m_engine);
     component.setData(
-        "import org.nemomobile.ngf 1.0\n"
+        "import Nemo.Ngf 1.0\n"
         "NonGraphicalFeedback { id: instance; }",
         QUrl("file:///dev/null"));
     QVERIFY2(component.isReady(),
@@ -114,7 +102,7 @@ void UtDeclarativeNgfEvent::initTestCase()
 
     QVERIFY(m_instance != 0);
 
-    QCOMPARE(QDeclarativeProperty::read(m_instance, "connected").toBool(), false);
+    QCOMPARE(QQmlProperty::read(m_instance, "connected").toBool(), false);
 }
 
 void UtDeclarativeNgfEvent::cleanupTestCase()
@@ -125,9 +113,9 @@ void UtDeclarativeNgfEvent::cleanupTestCase()
 
 void UtDeclarativeNgfEvent::testEventProperty()
 {
-    QDeclarativeProperty eventProperty(m_instance, "event");
+    QQmlProperty eventProperty(m_instance, "event");
 
-    QDeclarativeExpression eventExpression(m_engine->rootContext(), m_instance, "event");
+    QQmlExpression eventExpression(m_engine->rootContext(), m_instance, "event");
     eventExpression.setNotifyOnValueChanged(true);
     eventExpression.evaluate();
     QVERIFY2(!eventExpression.hasError(), qPrintable(eventExpression.error().toString()));
@@ -141,15 +129,15 @@ void UtDeclarativeNgfEvent::testEventProperty()
     QCOMPARE(eventProperty.read().toString(), QString("an-event"));
     QCOMPARE(eventExpression.evaluate().toString(), QString("an-event"));
 
-    QCOMPARE(QDeclarativeProperty::read(m_instance, "connected").toBool(), false);
-    QCOMPARE(QDeclarativeProperty::read(m_instance, "status").toInt(), (int)Stopped);
+    QCOMPARE(QQmlProperty::read(m_instance, "connected").toBool(), false);
+    QCOMPARE(QQmlProperty::read(m_instance, "status").toInt(), (int)Stopped);
 }
 
 void UtDeclarativeNgfEvent::testPlay()
 {
     QDBusInterface client(service(), path(),interface(), bus());
 
-    QDeclarativeExpression statusExpression(m_engine->rootContext(), m_instance, "status");
+    QQmlExpression statusExpression(m_engine->rootContext(), m_instance, "status");
     statusExpression.setNotifyOnValueChanged(true);
     statusExpression.evaluate();
     QVERIFY2(!statusExpression.hasError(), qPrintable(statusExpression.error().toString()));
@@ -157,7 +145,7 @@ void UtDeclarativeNgfEvent::testPlay()
 
     SignalSpy playCalledSpy(&client, SIGNAL(mock_playCalled(QString,QVariantMap)));
 
-    QDeclarativeExpression playExpression(m_engine->rootContext(), m_instance, "play()");
+    QQmlExpression playExpression(m_engine->rootContext(), m_instance, "play()");
     playExpression.evaluate();
     QVERIFY2(!playExpression.hasError(), qPrintable(playExpression.error().toString()));
 
@@ -171,15 +159,15 @@ void UtDeclarativeNgfEvent::testPlay()
     QCOMPARE(playCalledSpy.at(0).at(1).toMap(), QVariantMap());
     QCOMPARE(statusSpy.count(), 1);
 
-    QCOMPARE(QDeclarativeProperty::read(m_instance, "connected").toBool(), true);
-    QCOMPARE(QDeclarativeProperty::read(m_instance, "status").toInt(), (int)Playing);
+    QCOMPARE(QQmlProperty::read(m_instance, "connected").toBool(), true);
+    QCOMPARE(QQmlProperty::read(m_instance, "status").toInt(), (int)Playing);
 }
 
 void UtDeclarativeNgfEvent::testPause()
 {
     QDBusInterface client(service(), path(),interface(), bus());
 
-    QDeclarativeExpression statusExpression(m_engine->rootContext(), m_instance, "status");
+    QQmlExpression statusExpression(m_engine->rootContext(), m_instance, "status");
     statusExpression.setNotifyOnValueChanged(true);
     statusExpression.evaluate();
     QVERIFY2(!statusExpression.hasError(), qPrintable(statusExpression.error().toString()));
@@ -187,7 +175,7 @@ void UtDeclarativeNgfEvent::testPause()
 
     SignalSpy pauseCalledSpy(&client, SIGNAL(mock_pauseCalled(quint32,bool)));
 
-    QDeclarativeExpression pauseExpression(m_engine->rootContext(), m_instance, "pause()");
+    QQmlExpression pauseExpression(m_engine->rootContext(), m_instance, "pause()");
     pauseExpression.evaluate();
     QVERIFY2(!pauseExpression.hasError(), qPrintable(pauseExpression.error().toString()));
 
@@ -197,13 +185,13 @@ void UtDeclarativeNgfEvent::testPause()
     QCOMPARE(pauseCalledSpy.at(0).at(1).toBool(), true);
     QCOMPARE(statusSpy.count(), 1);
 
-    QCOMPARE(QDeclarativeProperty::read(m_instance, "connected").toBool(), true);
-    QCOMPARE(QDeclarativeProperty::read(m_instance, "status").toInt(), (int)Paused);
+    QCOMPARE(QQmlProperty::read(m_instance, "connected").toBool(), true);
+    QCOMPARE(QQmlProperty::read(m_instance, "status").toInt(), (int)Paused);
 
     statusSpy.clear();
     pauseCalledSpy.clear();
 
-    QDeclarativeExpression resumeExpression(m_engine->rootContext(), m_instance, "resume()");
+    QQmlExpression resumeExpression(m_engine->rootContext(), m_instance, "resume()");
     resumeExpression.evaluate();
     QVERIFY2(!resumeExpression.hasError(), qPrintable(resumeExpression.error().toString()));
 
@@ -213,15 +201,15 @@ void UtDeclarativeNgfEvent::testPause()
     QCOMPARE(pauseCalledSpy.at(0).at(1).toBool(), false);
     QCOMPARE(statusSpy.count(), 1);
 
-    QCOMPARE(QDeclarativeProperty::read(m_instance, "connected").toBool(), true);
-    QCOMPARE(QDeclarativeProperty::read(m_instance, "status").toInt(), (int)Playing);
+    QCOMPARE(QQmlProperty::read(m_instance, "connected").toBool(), true);
+    QCOMPARE(QQmlProperty::read(m_instance, "status").toInt(), (int)Playing);
 }
 
 void UtDeclarativeNgfEvent::testStop()
 {
     QDBusInterface client(service(), path(),interface(), bus());
 
-    QDeclarativeExpression statusExpression(m_engine->rootContext(), m_instance, "status");
+    QQmlExpression statusExpression(m_engine->rootContext(), m_instance, "status");
     statusExpression.setNotifyOnValueChanged(true);
     statusExpression.evaluate();
     QVERIFY2(!statusExpression.hasError(), qPrintable(statusExpression.error().toString()));
@@ -229,7 +217,7 @@ void UtDeclarativeNgfEvent::testStop()
 
     SignalSpy stopCalledSpy(&client, SIGNAL(mock_stopCalled(uint)));
 
-    QDeclarativeExpression stopExpression(m_engine->rootContext(), m_instance, "stop()");
+    QQmlExpression stopExpression(m_engine->rootContext(), m_instance, "stop()");
     stopExpression.evaluate();
     QVERIFY2(!stopExpression.hasError(), qPrintable(stopExpression.error().toString()));
 
@@ -238,15 +226,15 @@ void UtDeclarativeNgfEvent::testStop()
     QCOMPARE(stopCalledSpy.at(0).at(0).toInt(), 1);
     QCOMPARE(statusSpy.count(), 1);
 
-    QCOMPARE(QDeclarativeProperty::read(m_instance, "connected").toBool(), true);
-    QCOMPARE(QDeclarativeProperty::read(m_instance, "status").toInt(), (int)Stopped);
+    QCOMPARE(QQmlProperty::read(m_instance, "connected").toBool(), true);
+    QCOMPARE(QQmlProperty::read(m_instance, "status").toInt(), (int)Stopped);
 }
 
 void UtDeclarativeNgfEvent::testStopOutside()
 {
     QDBusInterface client(service(), path(),interface(), bus());
 
-    QDeclarativeExpression statusExpression(m_engine->rootContext(), m_instance, "status");
+    QQmlExpression statusExpression(m_engine->rootContext(), m_instance, "status");
     statusExpression.setNotifyOnValueChanged(true);
     statusExpression.evaluate();
     QVERIFY2(!statusExpression.hasError(), qPrintable(statusExpression.error().toString()));
@@ -254,7 +242,7 @@ void UtDeclarativeNgfEvent::testStopOutside()
 
     SignalSpy playCalledSpy(&client, SIGNAL(mock_playCalled(QString,QVariantMap)));
 
-    QDeclarativeExpression playExpression(m_engine->rootContext(), m_instance, "play()");
+    QQmlExpression playExpression(m_engine->rootContext(), m_instance, "play()");
     playExpression.evaluate();
     QVERIFY2(!playExpression.hasError(), qPrintable(playExpression.error().toString()));
 
@@ -268,8 +256,8 @@ void UtDeclarativeNgfEvent::testStopOutside()
     QCOMPARE(playCalledSpy.at(0).at(1).toMap(), QVariantMap());
     QCOMPARE(statusSpy.count(), 1);
 
-    QCOMPARE(QDeclarativeProperty::read(m_instance, "connected").toBool(), true);
-    QCOMPARE(QDeclarativeProperty::read(m_instance, "status").toInt(), (int)Playing);
+    QCOMPARE(QQmlProperty::read(m_instance, "connected").toBool(), true);
+    QCOMPARE(QQmlProperty::read(m_instance, "status").toInt(), (int)Playing);
 
     statusSpy.clear();
 
@@ -278,15 +266,15 @@ void UtDeclarativeNgfEvent::testStopOutside()
     QVERIFY(waitForSignals(SignalSpyList() << &statusSpy));
     QCOMPARE(statusSpy.count(), 1);
 
-    QCOMPARE(QDeclarativeProperty::read(m_instance, "connected").toBool(), true);
-    QCOMPARE(QDeclarativeProperty::read(m_instance, "status").toInt(), (int)Stopped);
+    QCOMPARE(QQmlProperty::read(m_instance, "connected").toBool(), true);
+    QCOMPARE(QQmlProperty::read(m_instance, "status").toInt(), (int)Stopped);
 }
 
 void UtDeclarativeNgfEvent::testFail()
 {
     QDBusInterface client(service(), path(),interface(), bus());
 
-    QDeclarativeExpression statusExpression(m_engine->rootContext(), m_instance, "status");
+    QQmlExpression statusExpression(m_engine->rootContext(), m_instance, "status");
     statusExpression.setNotifyOnValueChanged(true);
     statusExpression.evaluate();
     QVERIFY2(!statusExpression.hasError(), qPrintable(statusExpression.error().toString()));
@@ -294,7 +282,7 @@ void UtDeclarativeNgfEvent::testFail()
 
     SignalSpy playCalledSpy(&client, SIGNAL(mock_playCalled(QString,QVariantMap)));
 
-    QDeclarativeExpression playExpression(m_engine->rootContext(), m_instance, "play()");
+    QQmlExpression playExpression(m_engine->rootContext(), m_instance, "play()");
     playExpression.evaluate();
     QVERIFY2(!playExpression.hasError(), qPrintable(playExpression.error().toString()));
 
@@ -308,8 +296,8 @@ void UtDeclarativeNgfEvent::testFail()
     QCOMPARE(playCalledSpy.at(0).at(1).toMap(), QVariantMap());
     QCOMPARE(statusSpy.count(), 1);
 
-    QCOMPARE(QDeclarativeProperty::read(m_instance, "connected").toBool(), true);
-    QCOMPARE(QDeclarativeProperty::read(m_instance, "status").toInt(), (int)Playing);
+    QCOMPARE(QQmlProperty::read(m_instance, "connected").toBool(), true);
+    QCOMPARE(QQmlProperty::read(m_instance, "status").toInt(), (int)Playing);
 
     statusSpy.clear();
 
@@ -318,15 +306,15 @@ void UtDeclarativeNgfEvent::testFail()
     QVERIFY(waitForSignal(&statusSpy));
     QCOMPARE(statusSpy.count(), 1);
 
-    QCOMPARE(QDeclarativeProperty::read(m_instance, "connected").toBool(), true);
-    QCOMPARE(QDeclarativeProperty::read(m_instance, "status").toInt(), (int)Failed);
+    QCOMPARE(QQmlProperty::read(m_instance, "connected").toBool(), true);
+    QCOMPARE(QQmlProperty::read(m_instance, "status").toInt(), (int)Failed);
 }
 
 void UtDeclarativeNgfEvent::testPlayFail()
 {
     QDBusInterface client(service(), path(),interface(), bus());
 
-    QDeclarativeExpression statusExpression(m_engine->rootContext(), m_instance, "status");
+    QQmlExpression statusExpression(m_engine->rootContext(), m_instance, "status");
     statusExpression.setNotifyOnValueChanged(true);
     statusExpression.evaluate();
     QVERIFY2(!statusExpression.hasError(), qPrintable(statusExpression.error().toString()));
@@ -336,7 +324,7 @@ void UtDeclarativeNgfEvent::testPlayFail()
 
     client.call("mock_failNextPlay");
 
-    QDeclarativeExpression playExpression(m_engine->rootContext(), m_instance, "play()");
+    QQmlExpression playExpression(m_engine->rootContext(), m_instance, "play()");
     playExpression.evaluate();
     QVERIFY2(!playExpression.hasError(), qPrintable(playExpression.error().toString()));
 
@@ -350,8 +338,8 @@ void UtDeclarativeNgfEvent::testPlayFail()
     QCOMPARE(playCalledSpy.at(0).at(1).toMap(), QVariantMap());
     QCOMPARE(statusSpy.count(), 1);
 
-    QCOMPARE(QDeclarativeProperty::read(m_instance, "connected").toBool(), true);
-    QCOMPARE(QDeclarativeProperty::read(m_instance, "status").toInt(), (int)Failed);
+    QCOMPARE(QQmlProperty::read(m_instance, "connected").toBool(), true);
+    QCOMPARE(QQmlProperty::read(m_instance, "status").toInt(), (int)Failed);
 }
 
 void UtDeclarativeNgfEvent::testConnectionStatus()

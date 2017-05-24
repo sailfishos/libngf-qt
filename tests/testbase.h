@@ -13,10 +13,8 @@
 #include <QtTest/QSignalSpy>
 #include <QTest>
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-# define QTOSTRING_HELPER(s) #s
-# define QTOSTRING(s) QTOSTRING_HELPER(s)
-#endif
+#define QTOSTRING_HELPER(s) #s
+#define QTOSTRING(s) QTOSTRING_HELPER(s)
 
 Q_DECLARE_METATYPE(QDBusPendingCallWatcher*) // needed by waitForSignal
 
@@ -93,14 +91,8 @@ public:
     Q_SCRIPTABLE void mock_failNextPlay();
     Q_SCRIPTABLE void mock_disconnectForAWhile(const QDBusMessage &message);
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-    static void msgHandler(QtMsgType type, const char *message);
+    static void messageHandler(QtMsgType type, const QMessageLogContext &context, const QString &message);
     static void installMsgHandler();
-#else
-    static void messageHandler(QtMsgType type, const QMessageLogContext &context,
-        const QString &message);
-    static void installMsgHandler();
-#endif
 
 signals:
     Q_SCRIPTABLE void Status(quint32 event, quint32 status);
@@ -159,11 +151,7 @@ inline QByteArray TestBase::notifySignal(const QObject &object, const char *prop
     return QByteArray(QTOSTRING(QSIGNAL_CODE)).append(object.metaObject()->property(
                 object.metaObject()->indexOfProperty(property)
                 ).notifySignal()
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-                .signature()
-#else
                 .methodSignature()
-#endif
                 );
 }
 
@@ -437,19 +425,6 @@ inline void TestBase::NgfdMock::Stop(quint32 event, const QDBusMessage &message)
     emit mock_stopCalled(event);
 }
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-inline void TestBase::NgfdMock::msgHandler(QtMsgType type, const char *message)
-{
-    qInstallMsgHandler(0);
-    qt_message_output(type, QByteArray("MOCK   : ").append(message));
-    qInstallMsgHandler(msgHandler);
-}
-
-inline void TestBase::NgfdMock::installMsgHandler()
-{
-  qInstallMsgHandler(msgHandler);
-}
-#else
 inline void TestBase::NgfdMock::messageHandler(QtMsgType type, const QMessageLogContext &context,
     const QString &message)
 {
@@ -462,7 +437,6 @@ inline void TestBase::NgfdMock::installMsgHandler()
 {
   qInstallMessageHandler(messageHandler);
 }
-#endif
 
 inline quint32 TestBase::NgfdMock::mock_id(const QString &event) const
 {
@@ -535,11 +509,7 @@ inline void TestBase::NgfdMock::mock_disconnectForAWhile(const QDBusMessage &mes
     }
 }
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-# define COMPAT_APPLICATION_CLASS QApplication
-#else
-# define COMPAT_APPLICATION_CLASS QGuiApplication
-#endif
+#define COMPAT_APPLICATION_CLASS QGuiApplication
 
 #define TEST_MAIN(TestClass)                                                \
     int main(int argc, char *argv[])                                        \
