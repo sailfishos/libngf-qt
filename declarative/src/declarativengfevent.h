@@ -25,33 +25,12 @@ namespace Ngf {
     class Client;
 }
 
-/*!
-   \qmlclass NonGraphicalFeedback DeclarativeNgfEvent
-   \brief Playback of non-graphical feedback events
- 
-   NonGraphicalFeedback allows playback of system-defined events via the ngf
-   daemon, such as notification sounds and effects.
- 
-   An event's actions are defined by a string which is mapped to configuration
-   files installed on the system. Examples include "ringtone", "chat", or "battery_low".
- 
-   \qml
-   NonGraphicalFeedback {
-       id: ringtone
-       event: "ringtone"
-
-       Connections {
-           target: phone
-           onIncomingCall: ringtone.play()
-           onCallAnswered: ringtone.stop()
-       }
-   }
-   \endqml
- */
-
 class DeclarativeNgfEvent : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(bool connected READ isConnected NOTIFY connectedChanged)
+    Q_PROPERTY(QString event READ event WRITE setEvent NOTIFY eventChanged)
+    Q_PROPERTY(EventStatus status READ status NOTIFY statusChanged)
     Q_ENUMS(EventStatus)
 
 public:
@@ -65,35 +44,11 @@ public:
     DeclarativeNgfEvent(QObject *parent = 0);
     virtual ~DeclarativeNgfEvent();
 
-    /*!
-       \qmlproperty bool connected
-
-       Indicates if the NGF daemon is connected and active. The connection
-       will be established automatically when needed.
-     */
-    Q_PROPERTY(bool connected READ isConnected NOTIFY connectedChanged)
     bool isConnected() const;
 
-    /*!
-       \qmlproperty string event
-
-       Set the NGF event name. Events are defined in system-installed configuration files
-       with a short name like "ringtone" or "battery_low".
-
-       If the event is changed while playing, playback will be restarted
-       automatically with the new event.
-     */
-    Q_PROPERTY(QString event READ event WRITE setEvent NOTIFY eventChanged)
     QString event() const { return m_event; }
     void setEvent(const QString &event);
 
-    /*!
-       \qmlproperty EventStatus status
-
-       Current status of playback. This property is updated asynchronously after
-       requests to play, pause, or stop the event.
-     */
-    Q_PROPERTY(EventStatus status READ status NOTIFY statusChanged)
     EventStatus status() const { return m_status; }
 
 public slots:
