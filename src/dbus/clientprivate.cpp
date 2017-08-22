@@ -60,7 +60,7 @@ namespace Ngf
         ClientPrivate::EventState activeState;
         QDBusPendingCallWatcher *watcher;
     };
-};
+}
 
 Ngf::ClientPrivate::ClientPrivate(Client *parent)
     : QObject(parent),

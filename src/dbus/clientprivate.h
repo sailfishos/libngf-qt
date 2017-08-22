@@ -78,7 +78,7 @@ namespace Ngf
         void changeConnected(bool connected);
 
         Client * const q_ptr;
-        Q_DECLARE_PUBLIC(Client);
+        Q_DECLARE_PUBLIC(Client)
 
         QLoggingCategory m_log;
         QDBusServiceWatcher *m_serviceWatcher;
@@ -89,7 +89,6 @@ namespace Ngf
         quint32 m_clientEventId; // Internal counter for client event ids, incremented every time play is called.
         QList<Event*> m_events;
     };
-
-};
+}
 
 #endif

@@ -262,6 +262,6 @@ namespace Ngf
         ClientPrivate* const d_ptr;
     };
 
-};
+}
 
 #endif
