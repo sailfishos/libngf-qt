@@ -46,7 +46,7 @@ namespace Ngf
     class Event
     {
     public:
-        Event(const QString &_name, const quint32 &_clientEventId, QDBusPendingCallWatcher *_watcher)
+        Event(const QString &_name, quint32 _clientEventId, QDBusPendingCallWatcher *_watcher)
             : name(_name), clientEventId(_clientEventId), serverEventId(0),
               wantedState(ClientPrivate::StatePlaying), activeState(ClientPrivate::StateNew),
               watcher(_watcher)
@@ -133,8 +133,8 @@ bool Ngf::ClientPrivate::connect()
     // Match NGFD signals to get statuses for ongoing events
     if (iface) {
         if (iface->isValid()) {
-            iface->connection().connect(QStringLiteral(""), NgfPath, NgfInterface, SignalStatus,
-                                        this, SLOT(eventStatus(const quint32&, const quint32&)));
+            iface->connection().connect(QString(), NgfPath, NgfInterface, SignalStatus,
+                                        this, SLOT(eventStatus(quint32,quint32)));
             m_iface = iface;
             changeConnected(true);
         } else
@@ -190,7 +190,7 @@ bool Ngf::ClientPrivate::isConnected()
     return m_iface;
 }
 
-void Ngf::ClientPrivate::eventStatus(const quint32 &serverEventId, const quint32 &state)
+void Ngf::ClientPrivate::eventStatus(quint32 serverEventId, quint32 state)
 {
     Event *event = 0;
 
@@ -315,7 +315,7 @@ void Ngf::ClientPrivate::playPendingReply(QDBusPendingCallWatcher *watcher)
     watcher->deleteLater();
 }
 
-bool Ngf::ClientPrivate::pause(const quint32 &eventId)
+bool Ngf::ClientPrivate::pause(quint32 eventId)
 {
     return changeState(eventId, StatePaused);
 }
@@ -325,7 +325,7 @@ bool Ngf::ClientPrivate::pause(const QString &event)
     return changeState(event, StatePaused);
 }
 
-bool Ngf::ClientPrivate::resume(const quint32 &eventId)
+bool Ngf::ClientPrivate::resume(quint32 eventId)
 {
     return changeState(eventId, StatePlaying);
 }
@@ -335,7 +335,7 @@ bool Ngf::ClientPrivate::resume(const QString &event)
     return changeState(event, StatePlaying);
 }
 
-bool Ngf::ClientPrivate::stop(const quint32 &eventId)
+bool Ngf::ClientPrivate::stop(quint32 eventId)
 {
     return changeState(eventId, StateStopped);
 }
@@ -359,7 +359,7 @@ void Ngf::ClientPrivate::removeAllEvents()
     m_events.clear();
 }
 
-bool Ngf::ClientPrivate::changeState(const quint32 &clientEventId, EventState wantedState)
+bool Ngf::ClientPrivate::changeState(quint32 clientEventId, EventState wantedState)
 {
     if (!m_iface)
         return false;

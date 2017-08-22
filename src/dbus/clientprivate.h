@@ -48,11 +48,11 @@ namespace Ngf
         void disconnect();
         quint32 play(const QString &event);
         quint32 play(const QString &event, const Proplist &properties);
-        bool pause(const quint32 &eventId);
+        bool pause(quint32 eventId);
         bool pause(const QString &event);
-        bool resume(const quint32 &eventId);
+        bool resume(quint32 eventId);
         bool resume(const QString &event);
-        bool stop(const quint32 &eventId);
+        bool stop(quint32 eventId);
         bool stop(const QString &event);
 
         enum EventState {
@@ -64,7 +64,7 @@ namespace Ngf
 
     private slots:
         void playPendingReply(QDBusPendingCallWatcher *watcher);
-        void eventStatus(const quint32 &serverEventId, const quint32 &state);
+        void eventStatus(quint32 serverEventId, quint32 state);
         void serviceRegistered(const QString &service);
         void serviceUnregistered(const QString &service);
 
@@ -72,7 +72,7 @@ namespace Ngf
         void setEventState(Event *event, EventState wantedState);
         void removeEvent(Event *event);
         void removeAllEvents();
-        bool changeState(const quint32 &clientEventId, EventState wantedState);
+        bool changeState(quint32 clientEventId, EventState wantedState);
         bool changeState(const QString &clientEventName, EventState wantedState);
         void changeAvailable(bool available);
         void changeConnected(bool connected);
