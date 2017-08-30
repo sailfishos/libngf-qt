@@ -46,7 +46,7 @@ public:
         c.connect();
     }
 
-    ~Testing() {};
+    ~Testing() {}
 
     Ngf::Client c;
 

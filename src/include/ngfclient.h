@@ -171,7 +171,7 @@ namespace Ngf
          * \param event_id Identifier of event that is going to be paused.
          * \return False if no connection to NGF daemon.
          */
-        virtual bool pause(const quint32 &event_id);
+        virtual bool pause(quint32 event_id);
 
         /*!
          * Pause running events by event name.
@@ -189,7 +189,7 @@ namespace Ngf
          * \param event_id Identifier of paused event that is going to be resumed.
          * \return False if no connection to NGF daemon.
          */
-        virtual bool resume(const quint32 &event_id);
+        virtual bool resume(quint32 event_id);
 
         /*!
          * Resume paused events by event name.
@@ -207,7 +207,7 @@ namespace Ngf
          * \param event_id Identifier of running or paused event that is going to be stopped.
          * \return False if no connection to NGF daemon.
          */
-        virtual bool stop(const quint32 &event_id);
+        virtual bool stop(quint32 event_id);
 
         /*!
          * Stop running or paused events by event name.
@@ -262,6 +262,6 @@ namespace Ngf
         ClientPrivate* const d_ptr;
     };
 
-};
+}
 
 #endif

@@ -58,7 +58,7 @@ quint32 Ngf::Client::play(const QString &event, const QMap<QString, QVariant> &p
     return d_ptr->play(event, properties);
 }
 
-bool Ngf::Client::pause(const quint32 &event_id)
+bool Ngf::Client::pause(quint32 event_id)
 {
     return d_ptr->pause(event_id);
 }
@@ -68,7 +68,7 @@ bool Ngf::Client::pause(const QString &event)
     return d_ptr->pause(event);
 }
 
-bool Ngf::Client::resume(const quint32 &event_id)
+bool Ngf::Client::resume(quint32 event_id)
 {
     return d_ptr->resume(event_id);
 }
@@ -78,7 +78,7 @@ bool Ngf::Client::resume(const QString &event)
     return d_ptr->resume(event);
 }
 
-bool Ngf::Client::stop(const quint32 &event_id)
+bool Ngf::Client::stop(quint32 event_id)
 {
     return d_ptr->stop(event_id);
 }
