@@ -12,6 +12,7 @@
 #include <QtDBus/QDBusServiceWatcher>
 #include <QtTest/QSignalSpy>
 #include <QTest>
+#include <QSet>
 
 #define QTOSTRING_HELPER(s) #s
 #define QTOSTRING(s) QTOSTRING_HELPER(s)
@@ -509,7 +510,7 @@ inline void TestBase::NgfdMock::mock_disconnectForAWhile(const QDBusMessage &mes
     }
 }
 
-#define COMPAT_APPLICATION_CLASS QGuiApplication
+#define COMPAT_APPLICATION_CLASS QCoreApplication
 
 #define TEST_MAIN(TestClass)                                                \
     int main(int argc, char *argv[])                                        \

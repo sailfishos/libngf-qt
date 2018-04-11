@@ -1,6 +1,6 @@
 include(testapplication.pri)
 
-QT += quick
+QT += qml
 
 check.commands = '\
     cd "$${OUT_PWD}" \
