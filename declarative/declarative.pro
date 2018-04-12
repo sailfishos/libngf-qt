@@ -14,7 +14,8 @@ HEADERS += src/declarativengfevent.h
 
 TEMPLATE = lib
 CONFIG += qt plugin hide_symbols
-QT += quick
+QT += qml
+QT -= gui
 
 target.path = $$[QT_INSTALL_QML]/$$PLUGIN_IMPORT_PATH
 INSTALLS += target
