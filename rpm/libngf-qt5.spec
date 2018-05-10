@@ -49,7 +49,7 @@ Requires:   %{name} = %{version}-%{release}
 
 
 %build
-%qmake5 
+%qmake5 "VERSION=$(sed 's/+.*//' <<<"%{version}")"
 
 make %{?_smp_mflags}
 
