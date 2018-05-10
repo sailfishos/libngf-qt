@@ -20,10 +20,9 @@ QT -= gui
 target.path = $$[QT_INSTALL_QML]/$$PLUGIN_IMPORT_PATH
 INSTALLS += target
 
-qmldir.files += $$PWD/qmldir
+qmldir.files += qmldir plugins.qmltypes
 qmldir.path +=  $$target.path
 INSTALLS += qmldir
 
-qmltypes.files += $$PWD/plugins.qmltypes
-qmltypes.path +=  $$target.path
-INSTALLS += qmltypes
+qmltypes.commands = qmlplugindump -nonrelocatable Nemo.Ngf 1.0 > $$PWD/plugins.qmltypes
+QMAKE_EXTRA_TARGETS += qmltypes
