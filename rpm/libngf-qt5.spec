@@ -1,10 +1,10 @@
 Name:       libngf-qt5
 Summary:    Qt-based client library for Non-Graphic Feedback daemon
-Version:    0.4.0
+Version:    0.6.1
 Release:    1
 Group:      System/Libraries
 License:    LGPLv2.1
-URL:        https://github.com/nemomobile/libngf-qt
+URL:        https://git.merproject.org/mer-core/libngf-qt
 Source0:    %{name}-%{version}.tar.bz2
 Requires:   ngfd
 Requires(post): /sbin/ldconfig
@@ -49,9 +49,9 @@ Requires:   %{name} = %{version}-%{release}
 
 
 %build
-%qmake5 
+%qmake5 "VERSION=$(sed 's/+.*//' <<<"%{version}")"
 
-make %{?jobs:-j%jobs}
+make %{?_smp_mflags}
 
 
 %install
