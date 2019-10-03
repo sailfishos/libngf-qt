@@ -3,8 +3,8 @@ Summary:    Qt-based client library for Non-Graphic Feedback daemon
 Version:    0.6.1
 Release:    1
 Group:      System/Libraries
-License:    LGPLv2.1
-URL:        https://git.merproject.org/mer-core/libngf-qt
+License:    LGPLv2
+URL:        https://git.sailfishos.org/mer-core/libngf-qt
 Source0:    %{name}-%{version}.tar.bz2
 Requires:   ngfd
 Requires(post): /sbin/ldconfig
@@ -38,7 +38,6 @@ Requires:   %{name} = %{version}-%{release}
 
 %package tests
 Summary:    Test suite for libngf-qt5
-Group:      System/Libraries
 Requires:   %{name} = %{version}-%{release}
 
 %description tests
@@ -70,6 +69,7 @@ sed 's/Nemo.Ngf/org.nemomobile.ngf/' < declarative/qmldir > %{buildroot}%{_libdi
 %files
 %defattr(-,root,root,-)
 %{_libdir}/libngf-qt5.so.*
+%license COPYING
 
 %files devel
 %defattr(-,root,root,-)
@@ -80,13 +80,11 @@ sed 's/Nemo.Ngf/org.nemomobile.ngf/' < declarative/qmldir > %{buildroot}%{_libdi
 
 %files declarative
 %defattr(-,root,root,-)
-%dir %{_libdir}/qt5/qml/Nemo/Ngf
-%{_libdir}/qt5/qml/Nemo/Ngf/*
+%{_libdir}/qt5/qml/Nemo/Ngf/
 
 # org.nemomobile.ngf legacy import
-%dir %{_libdir}/qt5/qml/org/nemomobile/ngf
-%{_libdir}/qt5/qml/org/nemomobile/ngf/*
+%{_libdir}/qt5/qml/org/nemomobile/ngf/
 
 %files tests
 %defattr(-,root,root,-)
-/opt/tests/libngf-qt5/*
+/opt/tests/libngf-qt5/
