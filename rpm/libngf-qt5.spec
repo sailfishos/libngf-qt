@@ -1,6 +1,6 @@
 Name:       libngf-qt5
 Summary:    Qt-based client library for Non-Graphic Feedback daemon
-Version:    0.6.1
+Version:    0.6.5
 Release:    1
 License:    LGPLv2
 URL:        https://git.sailfishos.org/mer-core/libngf-qt
