@@ -33,8 +33,8 @@ namespace Ngf
 
     /*!
      * \class Ngf::Client ngfclient.h NgfClient
-     * \author Juho Hamalainen <juho.hamalainen@tieto.com>
-     * \version 0.1
+     * \author Juho Hämäläinen <juho.hamalainen@jolla.com>
+     * \version 0.7.0
      *
      * \brief Qt-based client library for NGF daemon (Non-Graphic Feedback)
      *
@@ -53,8 +53,8 @@ namespace Ngf
      *
      * NgfClient - Qt Non-Graphic Feedback daemon client library
      *
-     * Copyright (C) 2012 Jolla Ltd.
-     * Contact: juho.hamalainen@tieto.com
+     * Copyright (C) 2012-2021 Jolla Ltd.
+     * Contact: juho.hamalainen@jolla.com
      *
      * This work is free software; you can redistribute it and/or
      * modify it under the terms of the GNU Lesser General Public

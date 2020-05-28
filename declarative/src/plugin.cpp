@@ -1,4 +1,4 @@
-/* Copyright (C) 2013-2020 Jolla Ltd.
+/* Copyright (C) 2013-2021 Jolla Ltd.
  *
  * Contact: Juho Hämäläinen <juho.hamalainen@jolla.com>
  *
