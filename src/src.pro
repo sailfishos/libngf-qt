@@ -12,7 +12,7 @@ CONFIG += create_pc create_prl no_install_prl
 INCLUDEPATH += include
 include(dbus/dbus.pri)
 
-target.path = $$PREFIX/lib
+target.path = $$[QT_INSTALL_LIBS]
 headers.path = $$PREFIX/include/ngf-qt5
 headers.files = include/*
 
