@@ -1,5 +1,6 @@
-/* Copyright (C) 2013 Jolla Ltd.
- * Contact: John Brooks <john.brooks@jollamobile.com>
+/* Copyright (C) 2013-2021 Jolla Ltd.
+ *
+ * Contact: Juho Hämäläinen <juho.hamalainen@jolla.com>
  *
  * This work is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,6 +21,13 @@
 
 #include <QObject>
 #include <QSharedPointer>
+#include <QPair>
+#include <QString>
+#include <QVariant>
+#include <QQmlListProperty>
+#include <QVector>
+
+#include "declarativengfeventproperty.h"
 
 namespace Ngf {
     class Client;
@@ -31,6 +39,7 @@ class DeclarativeNgfEvent : public QObject
     Q_PROPERTY(bool connected READ isConnected NOTIFY connectedChanged)
     Q_PROPERTY(QString event READ event WRITE setEvent NOTIFY eventChanged)
     Q_PROPERTY(EventStatus status READ status NOTIFY statusChanged)
+    Q_PROPERTY(QQmlListProperty<DeclarativeNgfEventProperty> properties READ properties)
     Q_ENUMS(EventStatus)
 
 public:
@@ -50,6 +59,12 @@ public:
     void setEvent(const QString &event);
 
     EventStatus status() const { return m_status; }
+
+    QQmlListProperty<DeclarativeNgfEventProperty> properties();
+    void appendProperty(DeclarativeNgfEventProperty*);
+    int propertyCount() const;
+    DeclarativeNgfEventProperty *property(int) const;
+    void clearProperties();
 
 public slots:
     /*!
@@ -99,6 +114,12 @@ private:
     EventStatus m_status;
     quint32 m_eventId;
     bool m_autostart;
+
+    static void appendProperty(QQmlListProperty<DeclarativeNgfEventProperty>*, DeclarativeNgfEventProperty*);
+    static int propertyCount(QQmlListProperty<DeclarativeNgfEventProperty>*);
+    static DeclarativeNgfEventProperty* property(QQmlListProperty<DeclarativeNgfEventProperty>*, int);
+    static void clearProperties(QQmlListProperty<DeclarativeNgfEventProperty>*);
+    QVector<DeclarativeNgfEventProperty*> m_properties;
 };
 
 #endif

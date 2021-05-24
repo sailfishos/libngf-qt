@@ -8,9 +8,11 @@ LIBS += -L../src/ -lngf-qt5
 INCLUDEPATH += ../src/include
 
 SOURCES += src/plugin.cpp \
-    src/declarativengfevent.cpp
+           src/declarativengfevent.cpp \
+           src/declarativengfeventproperty.cpp
 
-HEADERS += src/declarativengfevent.h
+HEADERS += src/declarativengfevent.h \
+           src/declarativengfeventproperty.h
 
 TEMPLATE = lib
 CONFIG += qt plugin hide_symbols

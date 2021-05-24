@@ -1,5 +1,6 @@
-/* Copyright (C) 2013 Jolla Ltd.
- * Contact: John Brooks <john.brooks@jollamobile.com>
+/* Copyright (C) 2013-2021 Jolla Ltd.
+ *
+ * Contact: Juho Hämäläinen <juho.hamalainen@jolla.com>
  *
  * This work is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,6 +18,7 @@
 
 #include "declarativengfevent.h"
 #include <NgfClient>
+#include <QMap>
 
 /*!
    \qmlclass NonGraphicalFeedback DeclarativeNgfEvent
@@ -31,13 +33,14 @@
    \qml
    NonGraphicalFeedback {
        id: ringtone
-       event: "ringtone"
+       event: "voip_ringtone"
 
        Connections {
            target: phone
            onIncomingCall: ringtone.play()
            onCallAnswered: ringtone.stop()
        }
+
    }
    \endqml
  */
@@ -73,7 +76,12 @@ static QSharedPointer<Ngf::Client> clientInstance()
 }
 
 DeclarativeNgfEvent::DeclarativeNgfEvent(QObject *parent)
-    : QObject(parent), client(clientInstance()), m_status(Stopped), m_eventId(0), m_autostart(false)
+    : QObject(parent)
+    , client(clientInstance())
+    , m_status(Stopped)
+    , m_eventId(0)
+    , m_autostart(false)
+    , m_properties()
 {
     connect(client.data(), SIGNAL(connectionStatus(bool)), SLOT(connectionStatusChanged(bool)));
     connect(client.data(), SIGNAL(eventFailed(quint32)), SLOT(eventFailed(quint32)));
@@ -123,8 +131,24 @@ void DeclarativeNgfEvent::play()
     if (m_eventId)
         stop();
 
-    if (!m_event.isEmpty() && isConnected())
-        m_eventId = client->play(m_event);
+
+    if (!m_event.isEmpty() && isConnected()) {
+        if (m_properties.count() > 0) {
+            QMap<QString, QVariant> prop;
+
+            for (int i = 0; i < m_properties.count(); ++i) {
+                DeclarativeNgfEventProperty *property = m_properties.at(i);
+                QVariant value = property->value();
+                QMetaType::Type t = static_cast<QMetaType::Type>(value.type());
+                // NGF only allows boolean, integer, or string types for property values.
+                if (t == QMetaType::Bool || t == QMetaType::Int || t == QMetaType::QString)
+                    prop.insert(property->name(), value);
+            }
+            m_eventId = client->play(m_event, prop);
+        } else {
+            m_eventId = client->play(m_event);
+        }
+    }
 }
 
 /*!
@@ -231,3 +255,53 @@ void DeclarativeNgfEvent::eventPaused(quint32 id)
     emit statusChanged();
 }
 
+QQmlListProperty<DeclarativeNgfEventProperty> DeclarativeNgfEvent::properties()
+{
+    return QQmlListProperty<DeclarativeNgfEventProperty>(this, this,
+             &DeclarativeNgfEvent::appendProperty,
+             &DeclarativeNgfEvent::propertyCount,
+             &DeclarativeNgfEvent::property,
+             &DeclarativeNgfEvent::clearProperties);
+}
+
+void DeclarativeNgfEvent::appendProperty(DeclarativeNgfEventProperty* property)
+{
+    m_properties.append(property);
+}
+
+int DeclarativeNgfEvent::propertyCount() const
+{
+    return m_properties.count();
+}
+
+DeclarativeNgfEventProperty* DeclarativeNgfEvent::property(int index) const
+{
+    return m_properties.at(index);
+}
+
+void DeclarativeNgfEvent::clearProperties()
+{
+    m_properties.clear();
+}
+
+// QQmlListProperty
+
+void DeclarativeNgfEvent::appendProperty(QQmlListProperty<DeclarativeNgfEventProperty> *list, DeclarativeNgfEventProperty *property)
+{
+    reinterpret_cast< DeclarativeNgfEvent* >(list->data)->appendProperty(property);
+}
+
+int DeclarativeNgfEvent::propertyCount(QQmlListProperty<DeclarativeNgfEventProperty>* list)
+{
+    return reinterpret_cast< DeclarativeNgfEvent* >(list->data)->propertyCount();
+}
+
+DeclarativeNgfEventProperty* DeclarativeNgfEvent::property(QQmlListProperty<DeclarativeNgfEventProperty> *list, int i)
+{
+    return reinterpret_cast< DeclarativeNgfEvent* >(list->data)->property(i);
+}
+
+void DeclarativeNgfEvent::clearProperties(QQmlListProperty<DeclarativeNgfEventProperty> *list)
+{
+    reinterpret_cast< DeclarativeNgfEvent* >(list->data)->clearProperties();
+}

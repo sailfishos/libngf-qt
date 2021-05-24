@@ -1,5 +1,6 @@
-/* Copyright (C) 2013 Jolla Ltd.
- * Contact: John Brooks <john.brooks@jollamobile.com>
+/* Copyright (C) 2013-2021 Jolla Ltd.
+ *
+ * Contact: Juho Hämäläinen <juho.hamalainen@jolla.com>
  *
  * This work is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,6 +21,7 @@
 #include <QQmlEngine>
 #include <QQmlExtensionPlugin>
 #include "declarativengfevent.h"
+#include "declarativengfeventproperty.h"
 
 class Q_DECL_EXPORT NgfPlugin : public QQmlExtensionPlugin
 {
@@ -41,6 +43,7 @@ public:
         Q_ASSERT(uri == QLatin1String("Nemo.Ngf") || uri == QLatin1String("org.nemomobile.ngf"));
 
         qmlRegisterType<DeclarativeNgfEvent>(uri, 1, 0, "NonGraphicalFeedback");
+        qmlRegisterType<DeclarativeNgfEventProperty>(uri, 1, 0, "NgfProperty");
     }
 };
 
