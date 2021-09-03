@@ -3,7 +3,7 @@ Summary:    Qt-based client library for Non-Graphic Feedback daemon
 Version:    0.7.0
 Release:    1
 License:    LGPLv2
-URL:        https://git.sailfishos.org/mer-core/libngf-qt
+URL:        https://github.com/sailfishos/libngf-qt
 Source0:    %{name}-%{version}.tar.bz2
 Requires:   ngfd
 Requires(post): /sbin/ldconfig
