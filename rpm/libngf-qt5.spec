@@ -1,6 +1,6 @@
 Name:       libngf-qt5
 Summary:    Qt-based client library for Non-Graphic Feedback daemon
-Version:    0.7.0
+Version:    0.8.0
 Release:    1
 License:    LGPLv2
 URL:        https://github.com/sailfishos/libngf-qt
@@ -12,6 +12,7 @@ BuildRequires:  pkgconfig(Qt5Core)
 BuildRequires:  pkgconfig(Qt5DBus)
 BuildRequires:  pkgconfig(Qt5Qml)
 BuildRequires:  pkgconfig(Qt5Test)
+BuildRequires:  pkgconfig(Qt5Feedback)
 BuildRequires:  doxygen
 
 %description
@@ -19,9 +20,20 @@ This package contains the Qt-based client library for accessing
 Non-graphic feedback services.
 
 
+%package qtfeedback
+Summary:    QtFeedback plugin for Non-Graphic Feedback daemon
+Requires:   %{name} = %{version}-%{release}
+Requires(post):   /sbin/ldconfig
+Requires(postun): /sbin/ldconfig
+
+Obsoletes:  qt5-feedback-haptics-native-vibrator < 0.2.1+git1
+Provides:   qt5-feedback-haptics-native-vibrator = 0.2.1+git1
+
+%description qtfeedback
+%{summary}.
+
 %package devel
 Summary:    Development package for Qt-based client library for NGF daemon
-Group:      Development/Libraries
 Requires:   %{name} = %{version}-%{release}
 
 %description devel
@@ -29,7 +41,6 @@ Requires:   %{name} = %{version}-%{release}
 
 %package declarative
 Summary:    Declarative plugin for NGF clients
-Group:      Development/Libraries
 Requires:   %{name} = %{version}-%{release}
 
 %description declarative
@@ -69,6 +80,11 @@ sed 's/Nemo.Ngf/org.nemomobile.ngf/' < declarative/qmldir > %{buildroot}%{_libdi
 %defattr(-,root,root,-)
 %{_libdir}/libngf-qt5.so.*
 %license COPYING
+
+%files qtfeedback
+%defattr(-,root,root,-)
+%{_libdir}/qt5/plugins/feedback/libqtfeedback_libngf.so
+%{_libdir}/qt5/plugins/feedback/libngf.json
 
 %files devel
 %defattr(-,root,root,-)

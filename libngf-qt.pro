@@ -1,9 +1,12 @@
-CONFIG += ordered
 isEmpty(PREFIX) {
     PREFIX = /usr/local
 }
 TEMPLATE = subdirs
-SUBDIRS += src declarative tests
+SUBDIRS += src declarative tests feedback
+
+declarative.depends = src
+tests.depends = src declarative
+feedback.depends = src
 
 # No need to build this, but if you want then 'qmake EXAMPLE=1 && make'
 count(EXAMPLE, 1) {
