@@ -28,6 +28,8 @@ Requires(postun): /sbin/ldconfig
 
 Obsoletes:  qt5-feedback-haptics-native-vibrator < 0.2.1+git1
 Provides:   qt5-feedback-haptics-native-vibrator = 0.2.1+git1
+Obsoletes:  qt5-feedback-haptics-ffmemless < 0.2.9
+Provides:   qt5-feedback-haptics-ffmemless = 0.2.9
 
 %description qtfeedback
 %{summary}.
