@@ -25,9 +25,23 @@ Module {
         Property { name: "connected"; type: "bool"; isReadonly: true }
         Property { name: "event"; type: "string" }
         Property { name: "status"; type: "EventStatus"; isReadonly: true }
+        Property {
+            name: "properties"
+            type: "DeclarativeNgfEventProperty"
+            isList: true
+            isReadonly: true
+        }
         Method { name: "play" }
         Method { name: "pause" }
         Method { name: "resume" }
         Method { name: "stop" }
+    }
+    Component {
+        name: "DeclarativeNgfEventProperty"
+        prototype: "QObject"
+        exports: ["Nemo.Ngf/NgfProperty 1.0"]
+        exportMetaObjectRevisions: [0]
+        Property { name: "name"; type: "string" }
+        Property { name: "value"; type: "QVariant" }
     }
 }
