@@ -3,7 +3,7 @@ include(../common.pri)
 TARGET = ngf-declarative
 PLUGIN_IMPORT_PATH = Nemo/Ngf
 
-LIBS += -L../src/ -lngf-qt5
+LIBS += -L../src/ -lngf-qt$${QT_MAJOR_VERSION}
 
 INCLUDEPATH += ../src/include
 

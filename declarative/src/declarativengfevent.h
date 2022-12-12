@@ -116,11 +116,15 @@ private:
     bool m_autostart;
 
     static void appendProperty(QQmlListProperty<DeclarativeNgfEventProperty>*, DeclarativeNgfEventProperty*);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     static int propertyCount(QQmlListProperty<DeclarativeNgfEventProperty>*);
     static DeclarativeNgfEventProperty* property(QQmlListProperty<DeclarativeNgfEventProperty>*, int);
+#else
+    static qsizetype propertyCount(QQmlListProperty<DeclarativeNgfEventProperty>*);
+    static DeclarativeNgfEventProperty* property(QQmlListProperty<DeclarativeNgfEventProperty>*, qsizetype);
+#endif
     static void clearProperties(QQmlListProperty<DeclarativeNgfEventProperty>*);
     QVector<DeclarativeNgfEventProperty*> m_properties;
 };
 
 #endif
-
