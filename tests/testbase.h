@@ -1,6 +1,7 @@
 #ifndef TESTBASE_H
 #define TESTBASE_H
 
+#include <QtCore/QObject>
 #include <QtCore/QMetaProperty>
 #include <QtCore/QObject>
 #include <QtCore/QPointer>
@@ -123,13 +124,14 @@ private:
  *    It connects the signals to QEventLoop::quit(). When used together with QDBusInterface, it is
  *    usually too late to connect -- that is why the signalEmitted() signal exists.
  */
-class TestBase::SignalSpy : public QSignalSpy
+class TestBase::SignalSpy : public QObject, public QSignalSpy
 {
     Q_OBJECT
 
 public:
     SignalSpy(QObject *object, const char *signal)
-        : QSignalSpy(object, signal)
+        : QObject()
+        , QSignalSpy(object, signal)
     {
         connect(object, signal, this, SIGNAL(signalEmitted()));
     }
