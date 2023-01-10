@@ -41,6 +41,9 @@ public:
     void registerTypes(const char *uri)
     {
         Q_ASSERT(uri == QLatin1String("Nemo.Ngf") || uri == QLatin1String("org.nemomobile.ngf"));
+        if (uri == QLatin1String("org.nemomobile.ngf")) {
+            qWarning() << "org.nemomobile.ngf is deprecated qml module name and subject to be removed. Please migrate to Nemo.Ngf";
+        }
 
         qmlRegisterType<DeclarativeNgfEvent>(uri, 1, 0, "NonGraphicalFeedback");
         qmlRegisterType<DeclarativeNgfEventProperty>(uri, 1, 0, "NgfProperty");
