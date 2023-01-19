@@ -221,8 +221,10 @@ void Ngf::ClientPrivate::eventStatus(quint32 serverEventId, quint32 state)
             break;
 
         case StatusEventPlaying:
-            event->activeState = StatePlaying;
-            emit q_ptr->eventPlaying(event->clientEventId);
+            if (event->activeState != StatePlaying) {
+                event->activeState = StatePlaying;
+                emit q_ptr->eventPlaying(event->clientEventId);
+            }
             break;
 
         case StatusEventPaused:
