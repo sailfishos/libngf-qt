@@ -269,7 +269,7 @@ void NGFFeedback::startCustomEffect(ActiveEffect *active, const QFeedbackHaptics
          * of the feedback. Duration is determined by haptic.duration property
          * which either repeats or "stretches" the effect to the whole duration.
          */
-        quint32 id = m_client.play(QStringLiteral("feedback_press"), properties);
+        quint32 id = m_client.play(QStringLiteral("feedback_alert"), properties);
         if (!id) {
             qCWarning(ngflc) << "Could not play effect";
             reportError(effect, QFeedbackEffect::UnknownError);
