@@ -73,7 +73,8 @@ void NGFFeedback::failed(quint32 id)
     ActiveEffect *active = findEffect(id);
     if (active)
         m_activeEffects.removeAll(*active);
-    qCWarning(ngflc) << "Effect failed, id" << id;
+    // Can fail just because vibra feedbacks are disabled, so don't whine too loudly here
+    qCDebug(ngflc) << "Effect failed, id" << id;
 }
 
 void NGFFeedback::completed(quint32 id)
