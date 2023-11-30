@@ -48,7 +48,9 @@ namespace Ngf
     public:
         Event(const QString &_name, quint32 _clientEventId, QDBusPendingCallWatcher *_watcher)
             : name(_name), clientEventId(_clientEventId), serverEventId(0),
-              wantedState(ClientPrivate::StatePlaying), activeState(ClientPrivate::StateNew),
+              wantedState(ClientPrivate::StatePlaying),
+              activeState(ClientPrivate::StateNew),
+              pendingState(ClientPrivate::StateNew),
               watcher(_watcher)
         {}
         ~Event() {}
@@ -58,6 +60,7 @@ namespace Ngf
         quint32 serverEventId;
         ClientPrivate::EventState wantedState;
         ClientPrivate::EventState activeState;
+        ClientPrivate::EventState pendingState;
         QDBusPendingCallWatcher *watcher;
     };
 }
@@ -117,8 +120,9 @@ bool Ngf::ClientPrivate::connect()
             changeConnected(false);
             changeAvailable(false);
             return false;
-        } else
+        } else {
             changeAvailable(true);
+        }
     }
 
     if (!m_available) {
@@ -134,11 +138,12 @@ bool Ngf::ClientPrivate::connect()
     if (iface) {
         if (iface->isValid()) {
             iface->connection().connect(QString(), NgfPath, NgfInterface, SignalStatus,
-                                        this, SLOT(eventStatus(quint32,quint32)));
+                                        this, SLOT(setEventState(quint32,quint32)));
             m_iface = iface;
             changeConnected(true);
-        } else
+        } else {
             iface->deleteLater();
+        }
     }
 
     return m_connected;
@@ -190,7 +195,7 @@ bool Ngf::ClientPrivate::isConnected()
     return m_iface;
 }
 
-void Ngf::ClientPrivate::eventStatus(quint32 serverEventId, quint32 state)
+void Ngf::ClientPrivate::setEventState(quint32 serverEventId, quint32 state)
 {
     Event *event = 0;
 
@@ -242,10 +247,12 @@ void Ngf::ClientPrivate::eventStatus(quint32 serverEventId, quint32 state)
             return;
     }
 
-    if (state == StatusEventFailed || state == StatusEventCompleted)
+    if (state == StatusEventFailed || state == StatusEventCompleted) {
         removeEvent(event);
-    else
-        setEventState(event, event->wantedState);
+    } else if (event->pendingState != StateNew) {
+        requestEventState(event, event->pendingState);
+        event->pendingState = StateNew;
+    }
 }
 
 quint32 Ngf::ClientPrivate::play(const QString &event)
@@ -303,11 +310,12 @@ void Ngf::ClientPrivate::playPendingReply(QDBusPendingCallWatcher *watcher)
                 qCDebug(m_log) << event->clientEventId << "play: server replied" << event->serverEventId;
                 emit q_ptr->eventPlaying(event->clientEventId);
 
-                if (event->activeState != event->wantedState) {
+                if (event->pendingState != StateNew) {
                     qCDebug(m_log) << event->clientEventId
-                                   << "wanted state" << event->wantedState
+                                   << "wanted state" << event->pendingState
                                    << "differs from active state" << event->activeState;
-                    setEventState(event, event->wantedState);
+                    requestEventState(event, event->pendingState);
+                    event->pendingState = StateNew;
                 }
             }
             break;
@@ -369,41 +377,42 @@ bool Ngf::ClientPrivate::changeState(quint32 clientEventId, EventState wantedSta
     for (int i = 0; i < m_events.size(); ++i) {
         Event *e = m_events.at(i);
         if (e->clientEventId == clientEventId) {
-            setEventState(e, wantedState);
-            return true;
+            requestEventState(e, wantedState);
+            break;
         }
     }
 
-    return false;
+    return true;
 }
 
 bool Ngf::ClientPrivate::changeState(const QString &clientEventName, EventState wantedState)
 {
-    bool result = false;
-
     if (!m_iface)
         return false;
 
     for (int i = 0; i < m_events.size(); ++i) {
         Event *e = m_events.at(i);
         if (e->name == clientEventName) {
-            setEventState(e, wantedState);
-            result = true;
+            requestEventState(e, wantedState);
+            break;
         }
     }
 
-    return result;
+    return true;
 }
 
-void Ngf::ClientPrivate::setEventState(Event *event, EventState wantedState)
+void Ngf::ClientPrivate::requestEventState(Event *event, EventState wantedState)
 {
-    event->wantedState = wantedState;
-
-    if (event->wantedState == event->activeState ||
-        event->activeState == StateStopped ||
-        event->activeState == StateNew)
+    if (event->wantedState == wantedState
+            || event->activeState == StateStopped) {
         return;
+    } else if (event->activeState == StateNew) {
+        // can't make further requests before we have an id from play()
+        event->pendingState = wantedState;
+        return;
+    }
 
+    event->wantedState = wantedState;
     qCDebug(m_log) << event->clientEventId << "set state" << event->wantedState;
 
     switch (event->wantedState) {

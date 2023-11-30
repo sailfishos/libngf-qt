@@ -64,12 +64,12 @@ namespace Ngf
 
     private slots:
         void playPendingReply(QDBusPendingCallWatcher *watcher);
-        void eventStatus(quint32 serverEventId, quint32 state);
+        void setEventState(quint32 serverEventId, quint32 state);
         void serviceRegistered(const QString &service);
         void serviceUnregistered(const QString &service);
 
     private:
-        void setEventState(Event *event, EventState wantedState);
+        void requestEventState(Event *event, EventState wantedState);
         void removeEvent(Event *event);
         void removeAllEvents();
         bool changeState(quint32 clientEventId, EventState wantedState);
