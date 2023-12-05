@@ -12,7 +12,7 @@ HEADERS = testbase.h
 SOURCES = $${pro_file_basename}.cpp
 
 INCLUDEPATH += ../src/include
-LIBS += -L../src -lngf-qt5
+LIBS += -L../src -lngf-qt$${QT_MAJOR_VERSION}
 
 target.path = $${INSTALL_TESTDIR}
 INSTALLS += target
