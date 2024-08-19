@@ -290,13 +290,19 @@ void DeclarativeNgfEvent::appendProperty(QQmlListProperty<DeclarativeNgfEventPro
 {
     reinterpret_cast< DeclarativeNgfEvent* >(list->data)->appendProperty(property);
 }
-
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 int DeclarativeNgfEvent::propertyCount(QQmlListProperty<DeclarativeNgfEventProperty>* list)
+#else
+qsizetype DeclarativeNgfEvent::propertyCount(QQmlListProperty<DeclarativeNgfEventProperty>* list)
+#endif
 {
     return reinterpret_cast< DeclarativeNgfEvent* >(list->data)->propertyCount();
 }
-
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 DeclarativeNgfEventProperty* DeclarativeNgfEvent::property(QQmlListProperty<DeclarativeNgfEventProperty> *list, int i)
+#else
+DeclarativeNgfEventProperty* DeclarativeNgfEvent::property(QQmlListProperty<DeclarativeNgfEventProperty> *list, qsizetype i)
+#endif
 {
     return reinterpret_cast< DeclarativeNgfEvent* >(list->data)->property(i);
 }

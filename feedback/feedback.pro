@@ -7,7 +7,7 @@ QT -= gui
 TARGET = $$qtLibraryTarget(qtfeedback_libngf)
 PLUGIN_TYPE = feedback
 
-LIBS += -L../src/ -lngf-qt5
+LIBS += -L../src/ -lngf-qt$${QT_MAJOR_VERSION}
 INCLUDEPATH += ../src/include
 
 HEADERS += ngffeedback.h
