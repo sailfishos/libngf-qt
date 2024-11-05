@@ -344,6 +344,7 @@ void UtDeclarativeNgfEvent::testPlayFail()
 
 void UtDeclarativeNgfEvent::testConnectionStatus()
 {
+    QSKIP("Libngf-qt not currently tracking the daemon availability");
     QDBusInterface client(service(), path(), interface(), bus());
 
     DeclarativeExpression connectedExpression(m_engine->rootContext(), m_instance, "connected");

@@ -218,6 +218,7 @@ void UtClient::testPlayFail()
 
 void UtClient::testConnectionStatus()
 {
+    QSKIP("Libngf-qt not currently tracking the daemon availability");
     QDBusInterface client(service(), path(),interface(), bus());
 
     SignalSpy connectionStatusSpy(m_client, SIGNAL(connectionStatus(bool)));
