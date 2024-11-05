@@ -131,7 +131,6 @@ void DeclarativeNgfEvent::play()
     if (m_eventId)
         stop();
 
-
     if (!m_event.isEmpty() && isConnected()) {
         if (m_properties.count() > 0) {
             QMap<QString, QVariant> prop;
