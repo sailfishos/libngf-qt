@@ -52,8 +52,6 @@ void UtClient::initTestCase()
 
     m_client = new Client(this);
 
-    QDBusInterface client(service(), path(),interface(), bus());
-
     SignalSpy connectionStatusSpy(m_client, SIGNAL(connectionStatus(bool)));
 
     QVERIFY(m_client->connect());
@@ -109,9 +107,9 @@ void UtClient::testPlay()
 
 void UtClient::testPause()
 {
-    QDBusInterface client(service(), path(),interface(), bus());
+    QDBusInterface mockService(service(), path(), interface(), bus());
 
-    SignalSpy pauseCalledSpy(&client, SIGNAL(mock_pauseCalled(quint32,bool)));
+    SignalSpy pauseCalledSpy(&mockService, SIGNAL(mock_pauseCalled(quint32,bool)));
 
     SignalSpy eventPausedSpy(m_client, SIGNAL(eventPaused(quint32)));
 
@@ -140,9 +138,9 @@ void UtClient::testPause()
 
 void UtClient::testStop()
 {
-    QDBusInterface client(service(), path(),interface(), bus());
+    QDBusInterface mockService(service(), path(), interface(), bus());
 
-    SignalSpy stopCalledSpy(&client, SIGNAL(mock_stopCalled(uint)));
+    SignalSpy stopCalledSpy(&mockService, SIGNAL(mock_stopCalled(uint)));
 
     SignalSpy eventCompletedSpy(m_client, SIGNAL(eventCompleted(quint32)));
 
@@ -157,9 +155,9 @@ void UtClient::testStop()
 
 void UtClient::testFail()
 {
-    QDBusInterface client(service(), path(),interface(), bus());
+    QDBusInterface mockService(service(), path(), interface(), bus());
 
-    SignalSpy playCalledSpy(&client, SIGNAL(mock_playCalled(QString,QVariantMap)));
+    SignalSpy playCalledSpy(&mockService, SIGNAL(mock_playCalled(QString,QVariantMap)));
 
     QVariantMap properties;
     properties["foo"] = "fooval";
@@ -179,7 +177,7 @@ void UtClient::testFail()
 
     SignalSpy eventFailedSpy(m_client, SIGNAL(eventFailed(quint32)));
 
-    client.call("mock_fail", "an-event");
+    mockService.call("mock_fail", "an-event");
 
     QVERIFY(waitForSignal(&eventFailedSpy));
     QCOMPARE(eventFailedSpy.count(), 1);
@@ -188,9 +186,9 @@ void UtClient::testFail()
 
 void UtClient::testPlayFail()
 {
-    QDBusInterface client(service(), path(),interface(), bus());
+    QDBusInterface mockService(service(), path(), interface(), bus());
 
-    SignalSpy playCalledSpy(&client, SIGNAL(mock_playCalled(QString,QVariantMap)));
+    SignalSpy playCalledSpy(&mockService, SIGNAL(mock_playCalled(QString,QVariantMap)));
     SignalSpy eventPlayingSpy(m_client, SIGNAL(eventPlaying(quint32)));
     SignalSpy eventFailedSpy(m_client, SIGNAL(eventFailed(quint32)));
 
@@ -198,7 +196,7 @@ void UtClient::testPlayFail()
     properties["foo"] = "fooval";
     properties["bar"] = 42;
 
-    client.call("mock_failNextPlay");
+    mockService.call("mock_failNextPlay");
 
     quint32 id = m_client->play("an-event", properties);
     QVERIFY(id > 0);
@@ -219,11 +217,11 @@ void UtClient::testPlayFail()
 void UtClient::testConnectionStatus()
 {
     QSKIP("Libngf-qt not currently tracking the daemon availability");
-    QDBusInterface client(service(), path(),interface(), bus());
+    QDBusInterface mockService(service(), path(), interface(), bus());
 
     SignalSpy connectionStatusSpy(m_client, SIGNAL(connectionStatus(bool)));
 
-    client.call("mock_disconnectForAWhile");
+    mockService.call("mock_disconnectForAWhile");
 
     QList<bool> expected = QList<bool>() << false << true;
     while (!expected.isEmpty()) {
@@ -238,7 +236,7 @@ void UtClient::testConnectionStatus()
 
 void UtClient::testFastPlayStop()
 {
-    QDBusInterface client(service(), path(),interface(), bus());
+    QDBusInterface mockService(service(), path(), interface(), bus());
 
     SignalSpy eventCompletedSpy(m_client, SIGNAL(eventCompleted(quint32)));
 
