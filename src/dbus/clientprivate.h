@@ -65,7 +65,6 @@ namespace Ngf
     private slots:
         void playPendingReply(QDBusPendingCallWatcher *watcher);
         void setEventState(quint32 serverEventId, quint32 state);
-        void serviceRegistered(const QString &service);
         void serviceUnregistered(const QString &service);
 
     private:
@@ -74,7 +73,6 @@ namespace Ngf
         void removeAllEvents();
         bool changeState(quint32 clientEventId, EventState wantedState);
         bool changeState(const QString &clientEventName, EventState wantedState);
-        void changeAvailable(bool available);
         void changeConnected(bool connected);
 
         Client * const q_ptr;
@@ -82,10 +80,7 @@ namespace Ngf
 
         QLoggingCategory m_log;
         QDBusServiceWatcher *m_serviceWatcher;
-        bool m_connectionWanted;
-        bool m_available;
         bool m_connected;
-        QDBusInterface *m_iface;
         quint32 m_clientEventId; // Internal counter for client event ids, incremented every time play is called.
         QList<Event*> m_events;
     };

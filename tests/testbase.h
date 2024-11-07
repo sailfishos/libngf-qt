@@ -510,8 +510,6 @@ inline void TestBase::NgfdMock::mock_disconnectForAWhile(const QDBusMessage &mes
     }
 }
 
-#define COMPAT_APPLICATION_CLASS QCoreApplication
-
 #define TEST_MAIN(TestClass)                                                \
     int main(int argc, char *argv[])                                        \
     {                                                                       \
@@ -520,7 +518,7 @@ inline void TestBase::NgfdMock::mock_disconnectForAWhile(const QDBusMessage &mes
                                                                             \
         if (argc == 2 && argv[1] == QLatin1String("--mock")) {              \
             Ngf::Tests::TestBase::NgfdMock::installMsgHandler();            \
-            COMPAT_APPLICATION_CLASS app(argc, argv);                       \
+            QCoreApplication app(argc, argv);                               \
                                                                             \
             qDebug("%s: starting...", Q_FUNC_INFO);                         \
                                                                             \
@@ -528,7 +526,7 @@ inline void TestBase::NgfdMock::mock_disconnectForAWhile(const QDBusMessage &mes
                                                                             \
             return app.exec();                                              \
         } else {                                                            \
-            COMPAT_APPLICATION_CLASS app(argc, argv);                       \
+            QCoreApplication app(argc, argv);                               \
                                                                             \
             TestClass test;                                                 \
                                                                             \

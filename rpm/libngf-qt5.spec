@@ -61,12 +61,9 @@ Requires:   %{name} = %{version}-%{release}
 
 %build
 %qmake5 "VERSION=$(sed 's/+.*//' <<<"%{version}")"
-
-make %{?_smp_mflags}
-
+%make_build
 
 %install
-rm -rf %{buildroot}
 %qmake_install
 
 # org.nemomobile.ngf legacy import
@@ -79,29 +76,24 @@ sed 's/Nemo.Ngf/org.nemomobile.ngf/' < declarative/qmldir > %{buildroot}%{_libdi
 %postun -p /sbin/ldconfig
 
 %files
-%defattr(-,root,root,-)
 %{_libdir}/libngf-qt5.so.*
 %license COPYING
 
 %files qtfeedback
-%defattr(-,root,root,-)
 %{_libdir}/qt5/plugins/feedback/libqtfeedback_libngf.so
 %{_libdir}/qt5/plugins/feedback/libngf.json
 
 %files devel
-%defattr(-,root,root,-)
 %{_libdir}/libngf-qt5.so
 %{_includedir}/ngf-qt5/*.h
 %{_includedir}/ngf-qt5/NgfClient
 %{_libdir}/pkgconfig/ngf-qt5.pc
 
 %files declarative
-%defattr(-,root,root,-)
 %{_libdir}/qt5/qml/Nemo/Ngf/
 
 # org.nemomobile.ngf legacy import
 %{_libdir}/qt5/qml/org/nemomobile/ngf/
 
 %files tests
-%defattr(-,root,root,-)
 /opt/tests/libngf-qt5/

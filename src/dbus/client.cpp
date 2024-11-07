@@ -26,7 +26,8 @@
 
 Ngf::Client::Client(QObject *parent)
     : QObject(parent), d_ptr(new ClientPrivate(this))
-{}
+{
+}
 
 Ngf::Client::~Client()
 {
