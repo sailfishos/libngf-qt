@@ -1,8 +1,9 @@
 TEMPLATE = lib
 
-QT += core feedback
-CONFIG += qt plugin hide_symbols
+QT += core
+CONFIG += qt plugin hide_symbols link_pkgconfig
 QT -= gui
+PKGCONFIG += Qt5Feedback
 
 TARGET = $$qtLibraryTarget(qtfeedback_libngf)
 PLUGIN_TYPE = feedback
